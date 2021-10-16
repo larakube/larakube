@@ -1,0 +1,40 @@
+{
+  "name": "larakube/larakube",
+  "description": "Deploy your Laravel application to Kubernetes.",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ben Osborne",
+      "email": "hello@benosborne.io"
+    }
+  ],
+  "require": {
+    "php": "^7.4|^8.0",
+    "renoki-co/php-k8s": "^3.1",
+    "symfony/yaml": "^5.3"
+  },
+  "autoload": {
+    "files": [
+      "larakube.php"
+    ],
+    "psr-4": {
+      "Larakube\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Larakube\\LarakubeServiceProvider"
+      ]
+    }
+  },
+  "require-dev": {
+    "orchestra/testbench": "^6.21",
+    "pestphp/pest": "^1.20"
+  }
+}

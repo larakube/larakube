@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: database
+      namespace: default
+      labels:
+        app: database
+    spec:
+      containers:
+        -
+          name: database
+          image: 'mysql:latest'
+          imagePullPolicy: IfNotPresent
+          ports:
+            -
+              name: http
+              protocol: TCP
+              containerPort: 3306
+          env:
+            -
+              name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database
+                  key: mysql_root_password
+            -
+              name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: database
+                  key: mysql_database

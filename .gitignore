@@ -1,0 +1,16 @@
+.idea/
+.vscode/
+.DS_Store
+composer.phar
+/vendor/
+
+# Envs
+.env
+.env.local
+
+# Test Data
+.phpunit.result.cache
+/tests/temp/
+
+# Skaffold
+/bin/skaffold

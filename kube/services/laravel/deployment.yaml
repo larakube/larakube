@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: laravel
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: laravel
+  template:
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: laravel
+      namespace: default
+      labels:
+        app: laravel
+    spec:
+      containers:
+        -
+          name: laravel
+          image: laravel
+          imagePullPolicy: IfNotPresent
+          env:
+            -
+              name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: laravel
+                  key: db_host
+            -
+              name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: laravel
+                  key: db_username
+            -
+              name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: laravel
+                  key: db_password
