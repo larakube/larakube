@@ -137,18 +137,12 @@ class Service
     {
         $this->containerPort = $containerPort;
 
-        // TODO: Test that this works.
-        $this->hasService = true;
-
         return $this;
     }
 
     public function setServicePort(int $servicePort): self
     {
         $this->servicePort = $servicePort;
-
-        // TODO: Test that this works.
-        $this->hasService = true;
 
         return $this;
     }
@@ -161,15 +155,13 @@ class Service
         return $this;
     }
 
-    // TODO: Test
-    public function isService(bool $condition = true): self
+    public function enableService(): self
     {
-        $this->hasService = $condition;
+        $this->hasService = true;
 
         return $this;
     }
 
-    // TODO: Test
     public function hasService(): bool
     {
         return $this->hasService;
@@ -303,6 +295,9 @@ class Service
 
     public function getServiceManifest(): string
     {
+        if (!$this->hasService) {
+            throw new Exception('you must call ->enableService() for a service manifest to be generated');
+        }
         if (!$this->containerPort) {
             throw new Exception('a service with type=NodePort must have a containerPort specified');
         }
