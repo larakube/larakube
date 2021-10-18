@@ -290,7 +290,8 @@ spec:
 
 it('can generate a valid kubernetes service', function () {
     $service = Service::create('MySQL')
-        ->setContainerPort(3306);
+        ->setContainerPort(3306)
+        ->enableService();
 
     $expected = "apiVersion: v1
 kind: Service
@@ -314,7 +315,8 @@ spec:
 it('can generate a valid kubernetes service with service port', function () {
     $service = Service::create('MySQL')
         ->setContainerPort(3306)
-        ->setServicePort(3000);
+        ->setServicePort(3000)
+        ->enableService();
 
     $expected = "apiVersion: v1
 kind: Service
@@ -339,7 +341,8 @@ it('can generate a valid kubernetes service with namespace', function () {
     $service = Service::create('MySQL')
         ->setNamespace('production')
         ->setContainerPort(3306)
-        ->setServicePort(3000);
+        ->setServicePort(3000)
+        ->enableService();
 
     $expected = "apiVersion: v1
 kind: Service
@@ -360,7 +363,40 @@ spec:
     expect($service->getServiceManifest())->toBe($expected);
 });
 
+it('enable service does generate a service manifest', function () {
+    $service = Service::create('MySQL')
+        ->setNamespace('production')
+        ->setContainerPort(3306)
+        ->setServicePort(3000)
+        ->enableService();
+
+    $expected = "apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: production
+spec:
+  type: NodePort
+  ports:
+    -
+      name: http
+      port: 3000
+      targetPort: 3306
+  selector:
+    app: mysql
+";
+
+    expect($service->getServiceManifest())->toBe($expected);
+    expect($service->hasService())->toBeTrue();
+});
+
 it('throws an exception when generating a service manifest without a port', function () {
-    $service = Service::create('MySQL');
+    $service = Service::create('MySQL')
+        ->enableService();
     $service->getServiceManifest();
 })->expectExceptionMessage('a service with type=NodePort must have a containerPort specified');
+
+it('throws an exception when generating a service manifest when service is not enabled', function () {
+    $service = Service::create('MySQL');
+    $service->getServiceManifest();
+})->expectExceptionMessage('you must call ->enableService() for a service manifest to be generated');
