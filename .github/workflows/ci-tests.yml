@@ -51,9 +51,14 @@ jobs:
           kubernetes version: 'v1.19.2'
 
       - name: Enable Minikube Addons
+        env:
+          KUBECONFIG: ~/.kube/config
         run: |
           minikube version
           minikube addons enable registry
+          minikube update-context
 
       - name: Run test suite
+        env:
+          KUBECONFIG: ~/.kube/config
         run: composer run test
