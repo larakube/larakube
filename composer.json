@@ -35,6 +35,10 @@
   },
   "require-dev": {
     "orchestra/testbench": "^6.21",
-    "pestphp/pest": "^1.20"
+    "pestphp/pest": "^1.20",
+    "phpstan/phpstan": "^0.12.99"
+  },
+  "scripts": {
+    "test": "./vendor/bin/phpstan analyse && ./vendor/bin/pest"
   }
 }

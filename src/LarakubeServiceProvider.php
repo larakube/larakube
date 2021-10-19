@@ -3,9 +3,12 @@
 namespace Larakube;
 
 use Illuminate\Support\ServiceProvider;
+use Larakube\Build\BuildAndDeploy;
+use Larakube\Build\EnsureEnvironmentSecrets;
 use Larakube\Commands\DeployCommand;
 use Larakube\Commands\InstallCommand;
 use Larakube\Commands\MakeCommand;
+use Symfony\Component\Process\Process;
 
 class LarakubeServiceProvider extends ServiceProvider
 {
@@ -14,7 +17,7 @@ class LarakubeServiceProvider extends ServiceProvider
         //
     }
 
-    public function boot()
+    public function boot(): void
     {
         $this->publishes([
             __DIR__ . '/../kube' => base_path('kube'),
@@ -33,5 +36,16 @@ class LarakubeServiceProvider extends ServiceProvider
 
     private function providers(): void
     {
+        $this->app->bind(Process::class, function ($app, $args) {
+            return new Process($args);
+        });
+
+        $this->app->bind(EnsureEnvironmentSecrets::class, function () {
+            return new EnsureEnvironmentSecrets();
+        });
+
+        $this->app->bind(BuildAndDeploy::class, function () {
+            return new BuildAndDeploy();
+        });
     }
 }

@@ -12,14 +12,12 @@
 */
 
 use RenokiCo\PhpK8s\Kinds\K8sDeployment;
+use RenokiCo\PhpK8s\Kinds\K8sSecret;
 use RenokiCo\PhpK8s\Kinds\K8sService;
 use RenokiCo\PhpK8s\KubernetesCluster;
 use Symfony\Component\Process\Process;
 
 uses(Tests\TestCase::class)->in('Feature', 'Unit');
-
-const TEMP_DIR           = LARAKUBE_ROOT . '/tests/temp/';
-const TEST_SERVICES_PATH = LARAKUBE_ROOT . '/tests/data/services/';
 
 function startDockerRegistryContainer(): void
 {
@@ -47,19 +45,12 @@ function handleProcess(Process $process): void
     $process->wait();
 }
 
-function generateKubeConfig(): void
-{
-    $process = Process::fromShellCommandline(
-        'KUBECONFIG="tests/data/kube/config" minikube update-context'
-    );
-    handleProcess($process);
-}
-
 function deleteAllKubernetesResources(): void
 {
-    $cluster = KubernetesCluster::fromKubeConfigYamlFile('tests/data/kube/config', 'minikube');
+    $cluster = KubernetesCluster::fromKubeConfigVariable('minikube');
     $cluster->getAllDeployments()->each(fn(K8sDeployment $deployment) => $deployment->delete());
     $cluster->getAllServices()->each(fn(K8sService $service) => $service->delete());
+    $cluster->getAllSecrets()->each(fn(K8sSecret $secret) => $secret->delete());
 
     $totalResources = 1;
     while ($totalResources > 0) {

@@ -16,27 +16,31 @@ class InstallCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if (File::exists(LARAKUBE_ROOT . '/bin/skaffold')) {
-            File::delete(LARAKUBE_ROOT . '/bin/skaffold');
+        if (File::exists(package_root('bin/skaffold'))) {
+            File::delete(package_root('bin/skaffold'));
         }
 
-        File::ensureDirectoryExists(LARAKUBE_ROOT . '/bin');
+        File::ensureDirectoryExists(package_root('bin'));
 
         if (PHP_OS === 'Darwin') {
             $process = Process::fromShellCommandline(
                 'curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-darwin-amd64'
-            )->setWorkingDirectory(LARAKUBE_ROOT . '/bin');
+            )->setWorkingDirectory(package_root('bin'));
         } elseif (PHP_OS === 'Linux') {
             $process = Process::fromShellCommandline(
                 'curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64'
-            )->setWorkingDirectory(LARAKUBE_ROOT . '/bin');
+            )->setWorkingDirectory(package_root('bin'));
+        }
+        if (!isset($process)) {
+            $this->error('Larakube can only run on Linux or Mac OS.');
+            return self::FAILURE;
         }
 
         if ($process->run() > 0) {
             $this->error($process->getErrorOutput());
             return self::FAILURE;
         }
-        chmod(LARAKUBE_ROOT . '/bin/skaffold', 0755);
+        chmod(package_root('bin/skaffold'), 0755);
 
         return self::SUCCESS;
     }

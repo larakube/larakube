@@ -1,7 +1,9 @@
 <?php
 
-namespace Larakube\BuildProcess;
+namespace Larakube\Build;
 
+use Exception;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Larakube\Service;
 use Symfony\Component\Process\Process;
@@ -10,21 +12,20 @@ class BuildAndDeploy extends Step
 {
     private string $skaffoldBinary;
 
-    public function __construct()
+    public function __invoke(): void
     {
-        $this->skaffoldBinary = LARAKUBE_ROOT . '/bin/skaffold/macos/skaffold';
-
+        $this->ensureSkaffoldExists();
         $this->generateSkaffoldConfiguration();
-    }
 
-    public function __invoke()
-    {
-        $process = new Process([
+        /** @var Process $process */
+        $process = app()->make(
+            Process::class,
+            [
                 $this->skaffoldBinary,
                 'run',
                 '--auto-create-config=false',
                 sprintf('-d=%s', config('kube.registry.base_url')),
-                sprintf('-f=%s', base_path('skaffold.yaml')),
+                sprintf('-f=%s', package_root('skaffold.yaml')),
             ]
         );
         $process->setTimeout(60 * 10);
@@ -38,10 +39,21 @@ class BuildAndDeploy extends Step
         });
     }
 
+    private function ensureSkaffoldExists(): void
+    {
+        $this->skaffoldBinary = LARAKUBE_ROOT . '/bin/skaffold';
+
+        if (!File::exists($this->skaffoldBinary)) {
+            if (Artisan::call('kube:install') > 0) {
+                throw new Exception('failed to install Skaffold');
+            }
+        }
+    }
+
     private function generateSkaffoldConfiguration(): void
     {
-        include_once base_path('kube/services.php');
+        include_once package_root('kube/services.php');
 
-        File::put(base_path('skaffold.yaml'), Service::toYaml());
+        File::put(package_root('skaffold.yaml'), Service::toYaml());
     }
 }

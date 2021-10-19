@@ -1,0 +1,14 @@
+parameters:
+    paths:
+        - src
+        - kube
+        - config
+
+    # The level 8 is the highest level
+    level: 8
+
+    excludePaths:
+        - ./vendor
+        - ./tests/*
+
+    checkMissingIterableValueType: false

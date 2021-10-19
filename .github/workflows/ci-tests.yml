@@ -54,7 +54,9 @@ jobs:
         run: |
           minikube version
           minikube addons enable registry
+          KUBECONFIG="~/.kube/config" minikube update-context
 
       - name: Run test suite
-        run: |
-          ./vendor/bin/pest
+        env:
+          KUBECONFIG: ~/.kube/config
+        run: composer run test
