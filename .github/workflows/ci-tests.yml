@@ -56,7 +56,6 @@ jobs:
         run: |
           minikube version
           minikube addons enable registry
-          minikube update-context
 
       - name: Run test suite
         env:
