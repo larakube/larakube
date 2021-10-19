@@ -14,3 +14,4 @@ composer.phar
 
 # Skaffold
 /bin/skaffold
+skaffold.yaml

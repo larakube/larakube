@@ -56,5 +56,4 @@ jobs:
           minikube addons enable registry
 
       - name: Run test suite
-        run: |
-          ./vendor/bin/pest
+        run: composer run test

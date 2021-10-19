@@ -167,24 +167,26 @@ class Service
         return $this->hasService;
     }
 
-    public function setEnvironmentVariable(string $name, string $fromEnvName = ''): self
+    public function setEnvironmentVariable(string $name, string $value = '', string $fromEnvName = ''): self
     {
         $this->environment[] = [
             'name' => $name,
             'fromEnvName' => $fromEnvName ?? $name,
-            'secretKeyReference' => $this->name,
+            'serviceName' => $this->name,
             'key' => Str::lower($name),
+            'type' => $value === '' ? 'dynamic' : 'raw',
+            'value' => $value,
         ];
 
         return $this;
     }
 
-    public function getEnvironmentVariables(): array
+    public function getEnvironmentVariablesByService(): array
     {
         $secrets = [];
 
         collect($this->environment)->each(function (array $environment) use (&$secrets) {
-            $secrets[$environment['secretKeyReference']][] = $environment;
+            $secrets[$environment['serviceName']][] = $environment;
         });
 
         return $secrets;
@@ -278,7 +280,7 @@ class Service
                         'name' => $secret['name'],
                         'valueFrom' => [
                             'secretKeyRef' => [
-                                'name' => $secret['secretKeyReference'],
+                                'name' => $secret['serviceName'],
                                 'key' => $secret['key'],
                             ],
                         ],

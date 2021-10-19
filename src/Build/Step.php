@@ -1,13 +1,11 @@
 <?php
 
-namespace Larakube\BuildProcess;
+namespace Larakube\Build;
 
 use Illuminate\Console\OutputStyle;
 
 abstract class Step
 {
-    protected const CHECK = '\xE2\x9C\x94';
-
     protected OutputStyle $output;
 
     public function setOutput(OutputStyle $output): self
@@ -17,5 +15,5 @@ abstract class Step
         return $this;
     }
 
-    public abstract function __invoke();
+    public abstract function __invoke(): void;
 }
