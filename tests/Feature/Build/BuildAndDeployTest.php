@@ -76,9 +76,9 @@ test('it deploys a fresh application to cluster', function () {
     expect($secrets->filter(fn(K8sSecret $secret) => $secret->getName() === 'laravel'))->not()->toBeNull();
 
     // assert deployments were created
-    $laravelAndDatabase = 3;
-    $deployments        = $cluster->getAllDeployments();
-    expect($deployments)->toHaveCount($laravelAndDatabase);
+    $expectedDeployments = 2;
+    $deployments         = $cluster->getAllDeployments();
+    expect($deployments)->toHaveCount($expectedDeployments);
 
     // assert a services were created
     expect($cluster->getAllServices())->toHaveCount(2);
