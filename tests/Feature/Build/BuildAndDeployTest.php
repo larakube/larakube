@@ -80,6 +80,6 @@ test('it deploys a fresh application to cluster', function () {
     $deployments        = $cluster->getAllDeployments();
     expect($deployments)->toHaveCount($laravelAndDatabase);
 
-    // assert an ingress was created
-    expect($cluster->getAllIngresses())->toHaveCount(1);
+    // assert a services were created
+    expect($cluster->getAllServices())->toHaveCount(2);
 });
