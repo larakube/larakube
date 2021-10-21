@@ -80,6 +80,7 @@ test('it deploys a fresh application to cluster', function () {
     $deployments         = $cluster->getAllDeployments();
     expect($deployments)->toHaveCount($expectedDeployments);
 
-    // assert a services were created
-    expect($cluster->getAllServices())->toHaveCount(2);
+    // We only have two services but there is a default
+    // kubernetes service.
+    expect($cluster->getAllServices())->toHaveCount(3);
 });
