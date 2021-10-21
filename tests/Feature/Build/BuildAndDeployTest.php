@@ -16,6 +16,11 @@ afterEach(function () {
 });
 
 it('ensures skaffold binary is installed if not exists and generates skaffold configuration', function () {
+    config([
+        'kube.project_root' => package_root(),
+        'kube.services.path' => 'kube/services',
+    ]);
+
     File::delete(package_root('bin/skaffold'));
 
     $this->mock(EnsureEnvironmentSecrets::class)
@@ -52,6 +57,7 @@ it('ensures skaffold binary is installed if not exists and generates skaffold co
 test('it deploys a fresh application to cluster', function () {
     deleteAllKubernetesResources();
     config([
+        'kube.project_root' => package_root(),
         'kube.services.path' => 'kube/services',
         'kube.registry.base_url' => 'localhost:5000',
     ]);
@@ -70,7 +76,11 @@ test('it deploys a fresh application to cluster', function () {
     expect($secrets->filter(fn(K8sSecret $secret) => $secret->getName() === 'laravel'))->not()->toBeNull();
 
     // assert deployments were created
-    $laravelAndDatabase = 2;
-    $deployments        = $cluster->getAllDeployments();
-    expect($deployments)->toHaveCount($laravelAndDatabase);
+    $expectedDeployments = 2;
+    $deployments         = $cluster->getAllDeployments();
+    expect($deployments)->toHaveCount($expectedDeployments);
+
+    // We only have two services but there is a default
+    // kubernetes service.
+    expect($cluster->getAllServices())->toHaveCount(3);
 });

@@ -22,22 +22,27 @@ spec:
           name: laravel
           image: laravel
           imagePullPolicy: IfNotPresent
+          ports:
+            -
+              name: http
+              protocol: TCP
+              containerPort: 80
           env:
             -
               name: DB_HOST
               valueFrom:
                 secretKeyRef:
                   name: laravel
-                  key: db_host
+                  key: DB_HOST
             -
               name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: laravel
-                  key: db_username
+                  key: DB_USERNAME
             -
               name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: laravel
-                  key: db_password
+                  key: DB_PASSWORD

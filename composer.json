@@ -9,7 +9,7 @@
     }
   ],
   "require": {
-    "php": "^7.4|^8.0",
+    "php": "^8.0",
     "renoki-co/php-k8s": "^3.1",
     "symfony/yaml": "^5.3"
   },
@@ -39,6 +39,7 @@
     "phpstan/phpstan": "^0.12.99"
   },
   "scripts": {
-    "test": "./vendor/bin/phpstan analyse && ./vendor/bin/pest"
+    "unit-test": "./vendor/bin/phpstan analyse && ./vendor/bin/pest --testsuite=Unit",
+    "feature-test": "./vendor/bin/pest --testsuite=Feature"
   }
 }

@@ -3,7 +3,9 @@
 namespace Larakube\Commands;
 
 use Illuminate\Console\Command;
-use Larakube\Service;
+use Illuminate\Support\Facades\File;
+use Larakube\Cluster\Resource;
+use Larakube\Cluster\Resources;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -15,9 +17,17 @@ class MakeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        include_once base_path('kube/services.php');
+        include_once sprintf('%s/kube/services.php', config('kube.project_root'));
 
-        Service::make();
+        /** @var Resource $resource */
+        foreach (Resources::all() as $resource) {
+            $servicePath = sprintf('%s/%s', config('kube.services.path'), $resource->getName());
+            if (!File::exists($servicePath)) {
+                File::ensureDirectoryExists($servicePath);
+            }
+
+            $resource->flush($servicePath);
+        }
 
         return self::SUCCESS;
     }

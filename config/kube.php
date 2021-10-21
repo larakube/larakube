@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'project_root' => base_path(),
+
+    'cloud_provider' => 'DigitalOcean',
+
     'services' => [
         /*
         |--------------------------------------------------------------------------
