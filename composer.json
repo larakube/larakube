@@ -9,7 +9,7 @@
     }
   ],
   "require": {
-    "php": "^7.4|^8.0",
+    "php": "^8.0",
     "renoki-co/php-k8s": "^3.1",
     "symfony/yaml": "^5.3"
   },

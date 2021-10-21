@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: database
+  name: mysql
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: database
+      app: mysql
   template:
     apiVersion: v1
     kind: Pod
     metadata:
-      name: database
+      name: mysql
       namespace: default
       labels:
-        app: database
+        app: mysql
     spec:
       containers:
         -
-          name: database
+          name: mysql
           image: 'mysql:latest'
           imagePullPolicy: IfNotPresent
           ports:
@@ -32,11 +32,11 @@ spec:
               name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: database
-                  key: mysql_root_password
+                  name: mysql
+                  key: MYSQL_ROOT_PASSWORD
             -
               name: MYSQL_DATABASE
               valueFrom:
                 secretKeyRef:
-                  name: database
-                  key: mysql_database
+                  name: mysql
+                  key: MYSQL_DATABASE

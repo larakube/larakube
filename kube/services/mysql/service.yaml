@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: database
+  name: mysql
   namespace: default
 spec:
   type: NodePort
@@ -11,4 +11,4 @@ spec:
       port: 3306
       targetPort: 3306
   selector:
-    app: database
+    app: mysql

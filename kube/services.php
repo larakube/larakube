@@ -1,18 +1,41 @@
 <?php
 
-use Larakube\Service;
+use Larakube\Cluster\Deployment;
+use Larakube\Cluster\EnvironmentVariable;
+use Larakube\Cluster\Service;
+
+/*
+|--------------------------------------------------------------------------
+| Laravel Service
+|--------------------------------------------------------------------------
+*/
+Deployment::create('laravel')
+    ->setContainerPort(80)
+    ->setReplicaCount(2)
+    ->setDockerFilePath('Dockerfile')
+    ->setEnvironmentVariable(new EnvironmentVariable('DB_HOST', 'mysql'))
+    ->setEnvironmentVariable(new EnvironmentVariable('DB_USERNAME', 'root', fromEnvironmentVariableName: 'DB_USERNAME'))
+    ->setEnvironmentVariable(new EnvironmentVariable('DB_PASSWORD', fromEnvironmentVariableName: 'DB_PASSWORD'));
 
 Service::create('laravel')
-    ->setContainerPort(80)
-    ->enableService()
-    ->setEnvironmentVariable('DB_HOST', 'database', 'DB_HOST')
-    ->setEnvironmentVariable('DB_USERNAME', 'root', 'DB_USERNAME')
-    ->setEnvironmentVariable('DB_PASSWORD', '', 'DB_PASSWORD')
-    ->setDockerfile('Dockerfile');
+    ->setTargetPort(80)
+    ->setServicePort(80)
+    ->loadBalancer();
 
-Service::create('database')
+/*
+|--------------------------------------------------------------------------
+| MySQL Service
+|--------------------------------------------------------------------------
+*/
+Deployment::create('mysql')
     ->setContainerPort(3306)
-    ->enableService()
-    ->setEnvironmentVariable('MYSQL_ROOT_PASSWORD', '', 'DB_PASSWORD')
-    ->setEnvironmentVariable('MYSQL_DATABASE', '', 'DB_DATABASE')
-    ->setContainerImage('mysql', 'latest');
+    ->setReplicaCount(1)
+    ->setContainerImage('mysql')
+    ->setEnvironmentVariable(new EnvironmentVariable('MYSQL_ROOT_PASSWORD', fromEnvironmentVariableName: 'DB_PASSWORD'))
+    ->setEnvironmentVariable(new EnvironmentVariable('MYSQL_DATABASE', fromEnvironmentVariableName: 'DB_DATABASE'))
+    ->setEnvironmentVariable(new EnvironmentVariable('MYSQL_USER', fromEnvironmentVariableName: 'DB_USERNAME'))
+    ->setEnvironmentVariable(new EnvironmentVariable('MYSQL_PASSWORD', fromEnvironmentVariableName: 'DB_PASSWORD'));
+
+Service::create('mysql')
+    ->setTargetPort(3306)
+    ->setServicePort(3306);

@@ -5,7 +5,7 @@ namespace Larakube\Build;
 use Exception;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
-use Larakube\Service;
+use Larakube\SkaffoldDumper;
 use Symfony\Component\Process\Process;
 
 class BuildAndDeploy extends Step
@@ -52,8 +52,8 @@ class BuildAndDeploy extends Step
 
     private function generateSkaffoldConfiguration(): void
     {
-        include_once package_root('kube/services.php');
+        include_once sprintf('%s/kube/services.php', config('kube.project_root'));
 
-        File::put(package_root('skaffold.yaml'), Service::toYaml());
+        File::put(package_root('skaffold.yaml'), (new SkaffoldDumper())->toYaml());
     }
 }

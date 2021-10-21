@@ -2,7 +2,9 @@
 
 namespace Larakube\Build;
 
-use Larakube\Service;
+use Larakube\Cluster\Deployment;
+use Larakube\Cluster\EnvironmentVariable;
+use Larakube\Cluster\Resources;
 use RenokiCo\PhpK8s\KubernetesCluster;
 
 class EnsureEnvironmentSecrets extends Step
@@ -11,37 +13,30 @@ class EnsureEnvironmentSecrets extends Step
 
     public function __construct()
     {
-        include_once package_root('kube/services.php');
+        include_once sprintf('%s/kube/services.php', config('kube.project_root'));
 
         $this->cluster = KubernetesCluster::fromKubeConfigVariable();
     }
 
     public function __invoke(): void
     {
-        Service::all()->each(function (Service $service) {
-            foreach ($service->getEnvironmentVariablesByService() as $serviceName => $secret) {
-                $this->cluster->secret()
-                    ->setName($serviceName)
-                    ->setData(
-                        collect($secret)->mapWithKeys(function ($secret) {
-                            return [
-                                $secret['key'] => self::lookupEnvironmentValue($secret),
-                            ];
-                        })->toArray()
-                    )->createOrUpdate();
-            }
+        Resources::getDeployments()->each(function (Deployment $deployment) {
+            $this->applyClusterSecrets($deployment);
         });
     }
 
-    private static function lookupEnvironmentValue(array $secret): string
+    private function applyClusterSecrets(Deployment $deployment): void
     {
-        if ($secret['type'] === 'raw') {
-            return value($secret['value']);
-        }
-
-        return env(
-            $secret['fromEnvName'] ?: $secret['name'],
-            $secret['value']
-        );
+        $this->cluster->secret()
+            ->setName($deployment->getName())
+            ->setData(
+                collect($deployment->getEnvironmentVariables())->mapWithKeys(
+                    function (EnvironmentVariable $environmentVariable) {
+                        return [
+                            $environmentVariable->getName() => $environmentVariable->getValue(),
+                        ];
+                    }
+                )->toArray()
+            )->createOrUpdate();
     }
 }

@@ -2,7 +2,7 @@
 
 const LARAKUBE_ROOT = __DIR__;
 
-function package_root(string $path): string
+function package_root(string $path = ''): string
 {
     return sprintf(
         '%s%s%s',

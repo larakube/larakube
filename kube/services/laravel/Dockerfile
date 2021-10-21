@@ -25,4 +25,7 @@ RUN composer install --no-dev
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 775 /var/www/html
 
+# Optimize our application
+RUN php artisan optimize
+
 EXPOSE 80
