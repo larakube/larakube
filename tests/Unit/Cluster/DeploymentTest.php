@@ -208,7 +208,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: mysql
-                  key: mysql_root_password
+                  key: MYSQL_ROOT_PASSWORD
 ";
 
     expect($deployment->toManifest())->toBe($expected);

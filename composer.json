@@ -39,6 +39,7 @@
     "phpstan/phpstan": "^0.12.99"
   },
   "scripts": {
-    "test": "./vendor/bin/phpstan analyse && ./vendor/bin/pest"
+    "unit-test": "./vendor/bin/phpstan analyse && ./vendor/bin/pest --testsuite=Unit",
+    "feature-test": "./vendor/bin/pest --testsuite=Feature"
   }
 }
