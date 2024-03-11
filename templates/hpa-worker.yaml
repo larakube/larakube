@@ -1,0 +1,35 @@
+{{- range $i, $value := .Values.worker }}
+{{- if $value.autoscaling.enabled }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "larakube.fullname" $ }}-worker-{{ $i }}
+  labels:
+    {{- include "larakube.labels" $ | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "larakube.fullname" $ }}
+  minReplicas: {{ $value.autoscaling.minReplicas }}
+  maxReplicas: {{ $value.autoscaling.maxReplicas }}
+  metrics:
+    {{- if $value.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ $value.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if $value.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ $value.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}
+{{- end }}

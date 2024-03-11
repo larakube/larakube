@@ -1,0 +1,40 @@
+{{- if .Values.web.traefik.enabled }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "larakube.fullname" . }}-traefik-ingress
+  labels:
+    {{- include "larakube.labels" . | nindent 4 }}
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`{{ .Values.web.traefik.domain }}`)
+      kind: Rule
+      services:
+        - name: {{ include "larakube.fullname" . }}-web
+          port: {{ .Values.service.port }}
+      middlewares:
+        - name: {{ include "larakube.fullname" . }}-traefik-middleware-compress
+        - name: {{ include "larakube.fullname" . }}-traefik-middleware-custom-request-headers
+  tls:
+    secretName: {{ include "larakube.fullname" . }}-cert-secret
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "larakube.fullname" . }}-traefik-ingress-redirect-to-https
+  labels:
+    {{- include "larakube.labels" . | nindent 4 }}
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`{{ .Values.web.traefik.domain }}`)
+      kind: Rule
+      services:
+        - name: {{ include "larakube.fullname" . }}-web
+          port: {{ .Values.service.port }}
+      middlewares:
+        - name: {{ include "larakube.fullname" . }}-traefik-middleware-permanent-redirect-https
+{{- end }}

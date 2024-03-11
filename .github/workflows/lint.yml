@@ -1,0 +1,20 @@
+name: Lint Helm Chart
+
+on: [push]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Install Helm"
+        uses: azure/setup-helm@v3
+
+      - name: "Lint helm chart"
+        run: helm lint . --values values.yaml
+
+      - name: "Build helm chart"
+        run: helm template . --values values.yaml --output-dir build --debug

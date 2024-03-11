@@ -1,0 +1,36 @@
+{{- if .Values.web.traefik.enabled }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "larakube.fullname" . }}-traefik-middleware-compress
+  labels:
+    {{- include "larakube.labels" . | nindent 4 }}
+spec:
+  compress:
+    minResponseBodyBytes: 1200
+---
+# TODO: optional, if you want to use custom request headers
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "larakube.fullname" . }}-traefik-middleware-custom-request-headers
+  labels:
+    {{- include "larakube.labels" . | nindent 4 }}
+spec:
+  headers:
+    customRequestHeaders:
+      X-Forwarded-Proto: "https"
+      X-Forwarded-Port: "443"
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "larakube.fullname" . }}-traefik-middleware-permanent-redirect-https
+  labels:
+    {{- include "larakube.labels" . | nindent 4 }}
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+---
+{{- end }}
