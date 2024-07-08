@@ -17,6 +17,9 @@ spec:
       middlewares:
         - name: {{ include "larakube.fullname" . }}-traefik-middleware-compress
         - name: {{ include "larakube.fullname" . }}-traefik-middleware-custom-request-headers
+        {{- range $key, $value := .Values.web.traefik.extraMiddlewares }}
+        - name: {{ $value }}
+        {{- end }}
   tls:
     secretName: {{ include "larakube.fullname" . }}-cert-secret
 ---
