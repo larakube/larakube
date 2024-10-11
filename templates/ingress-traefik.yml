@@ -16,7 +16,7 @@ spec:
           port: {{ .Values.service.port }}
       middlewares:
         - name: {{ include "larakube.fullname" . }}-traefik-middleware-compress
-        - name: {{ include "larakube.fullname" . }}-traefik-middleware-custom-request-headers
+        - name: {{ include "larakube.fullname" . }}-traefik-middleware-custom-headers
         {{- range $key, $value := .Values.web.traefik.extraMiddlewares }}
         - name: {{ $value }}
         {{- end }}

@@ -9,18 +9,22 @@ spec:
   compress:
     minResponseBodyBytes: 1200
 ---
-# TODO: optional, if you want to use custom request headers
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
-  name: {{ include "larakube.fullname" . }}-traefik-middleware-custom-request-headers
+  name: {{ include "larakube.fullname" . }}-traefik-middleware-custom-headers
   labels:
     {{- include "larakube.labels" . | nindent 4 }}
 spec:
   headers:
+    {{- with .Values.web.traefik.customRequestHeaders }}
     customRequestHeaders:
-      X-Forwarded-Proto: "https"
-      X-Forwarded-Port: "443"
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.web.traefik.customResponseHeaders }}
+    customResponseHeaders:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware

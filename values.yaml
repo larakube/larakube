@@ -123,6 +123,8 @@ web:
     compress: true
     domain: ""
     extraMiddlewares: []
+    customRequestHeaders: {}
+    customResponseHeaders: {}
 
 worker:
   default:
