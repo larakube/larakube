@@ -11,10 +11,17 @@ jobs:
         uses: actions/checkout@v4
 
       - name: "Install Helm"
-        uses: azure/setup-helm@v3
+        uses: azure/setup-helm@v4
 
       - name: "Lint helm chart"
-        run: helm lint . --values values.yaml
+        run: helm lint charts/larakube --values charts/larakube/values.yaml
 
       - name: "Build helm chart"
-        run: helm template . --values values.yaml --output-dir build --debug
+        run: helm template charts/larakube --values charts/larakube/values.yaml --output-dir build --debug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: build
+          compression-level: 9
+          if-no-files-found: error
