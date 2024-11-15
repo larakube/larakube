@@ -1,0 +1,31 @@
+on:
+  push:
+    branches:
+      - gh-pages
+  workflow_dispatch:
+
+name: Deploy Chart
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Check out code"
+        uses: actions/checkout@v4
+
+      - name: "Create deployment folder"
+        run: mkdir -p ./build && cp index.yaml ./build && cp index.html ./build
+
+      - name: "Setup PHP with PECL extension"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, bcmath, soap, intl, gd, exif
+
+      - name: "Download Fastfront CLI"
+        run: curl https://fastfront-cli.s3.fr-par.scw.cloud/fastfront-cli.phar -o fastfront-cli.phar
+
+      - name: "Deploy with Fastfront"
+        run: php fastfront-cli.phar deploy $FASTFRONT_STAGE ./build
+        env:
+          FASTFRONT_STAGE: ${{ '9d7ef70e-f7d1-4c7e-aeb5-b066fc54eb32' }}
+          FASTFRONT_API_KEY: ${{ secrets.FASTFRONT_CHART_API_KEY }}
