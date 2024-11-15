@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  larakube:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2024-11-15T18:09:23.717903077Z"
+    description: A Helm chart for Laravel applications
+    digest: fac5416e898ee25dd91544410d9b970fead6ccec8aa2e4c0feb69b81ce986f17
+    name: larakube
+    type: application
+    urls:
+    - https://github.com/solidtime-io/larakube/releases/download/larakube-0.1.0/larakube-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-11-15T18:09:23.717912735Z"
