@@ -1,0 +1,22 @@
+{{- range $i, $value := .Values.worker }}
+{{- if $value.pdb.enabled }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "larakube.fullname" $ }}-worker-{{ $i }}
+  labels:
+    {{- include "larakube.labels" $ | nindent 4 }}
+spec:
+  {{- if $value.pdb.minAvailable }}
+  minAvailable: {{ $value.pdb.minAvailable }}
+  {{- end }}
+  {{- if $value.pdb.maxUnavailable }}
+  maxUnavailable: {{ $value.pdb.maxUnavailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "larakube.selectorLabels" $ | nindent 6 }}
+      app.kubernetes.io/component: worker-{{ $i }}
+{{- end }}
+{{- end }}

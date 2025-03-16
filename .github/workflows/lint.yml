@@ -19,7 +19,8 @@ jobs:
       - name: "Build helm chart"
         run: helm template charts/larakube --values charts/larakube/values.yaml --output-dir build --debug
 
-      - uses: actions/upload-artifact@v4
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@v4
         with:
           name: build
           path: build
