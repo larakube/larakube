@@ -10,12 +10,25 @@ export default defineConfig({
 			social: {
 				github: 'https://github.com/solidtime-io/larakube',
 			},
+			lastUpdated: true,
+			editLink: {
+				baseUrl: 'https://github.com/solidtime-io/larakube/edit/main/docs/',
+			},
 			sidebar: [
 				{
 					label: 'Guide',
 					items: [
 						// Each item here is one entry in the navigation menu.
 						{ label: 'Getting started', slug: 'guide/getting-started' },
+						{ label: 'Scheduler', slug: 'guide/scheduler' },
+						{ label: 'Deployment', slug: 'guide/deployment' },
+					],
+				},
+				{
+					label: 'Examples',
+					items: [
+						// Each item here is one entry in the navigation menu.
+						{ label: 'Laravel Octane', slug: 'examples/laravel-octane' },
 					],
 				},
 				{

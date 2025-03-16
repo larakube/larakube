@@ -1,6 +1,6 @@
 ---
 title: Getting started
-description: A guide in my new Starlight docs site.
+description: Installing the LaraKube helm chart
 ---
 
 LaraKube is a Helm chart to run Laravel applications on Kubernetes (K8S).
@@ -12,4 +12,7 @@ After the preparations you can install the Helm chart with the following command
 helm repo add larakube https://charts.larakube.com
 ```
 
-
+You can update the repository with the following command:
+```bash
+helm repo update larakube
+```
