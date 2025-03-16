@@ -3,6 +3,16 @@ entries:
   larakube:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2025-03-16T11:49:09.173767937Z"
+    description: A Helm chart for Laravel applications
+    digest: 3a04a2c01c48af7676da7c951a69cc94558a88a616d1ba5e56d52b3bd0af8c42
+    name: larakube
+    type: application
+    urls:
+    - https://github.com/solidtime-io/larakube/releases/download/larakube-0.1.1/larakube-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2024-11-15T18:09:23.717903077Z"
     description: A Helm chart for Laravel applications
     digest: fac5416e898ee25dd91544410d9b970fead6ccec8aa2e4c0feb69b81ce986f17
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://github.com/solidtime-io/larakube/releases/download/larakube-0.1.0/larakube-0.1.0.tgz
     version: 0.1.0
-generated: "2024-11-15T18:09:23.717912735Z"
+generated: "2025-03-16T11:49:09.17378028Z"
