@@ -130,6 +130,7 @@ web:
     enabled: false
     issuer: ""
     domains: []
+
   traefik:
     enabled: false
     compress: true
@@ -175,6 +176,10 @@ worker:
 scheduler:
   enabled: true
   schedule: "* * * * *" # every minute
+  command:
+    - /bin/sh
+    - -c
+    - php artisan schedule:run
   env: { }
   resources: { }
     # We usually recommend not to specify default resources and to leave this as a conscious
