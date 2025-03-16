@@ -1,0 +1,46 @@
+on:
+  push:
+    branches:
+      - main
+      - feature/release_action
+  workflow_dispatch:
+
+name: Deploy Docs
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./docs
+    steps:
+      - name: "Check out code"
+        uses: actions/checkout@v4
+
+      - name: "Install dependencies"
+        run: npm ci
+
+      - name: "Build"
+        run: npm run build
+
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs
+          path: docs/dist
+          compression-level: 9
+          if-no-files-found: error
+
+      - name: "Setup PHP with PECL extension"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, bcmath, soap, intl, gd, exif
+
+      - name: "Download Fastfront CLI"
+        run: curl https://fastfront-cli.s3.fr-par.scw.cloud/fastfront-cli.phar -o fastfront-cli.phar
+
+      - name: "Deploy with Fastfront"
+        run: php fastfront-cli.phar deploy $FASTFRONT_STAGE ./dist
+        env:
+          FASTFRONT_STAGE: ${{ '864294c8-0d6b-4c81-8f1b-6c340a4e62ef' }}
+          FASTFRONT_API_KEY: ${{ secrets.FASTFRONT_DOCS_API_KEY }}

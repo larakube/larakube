@@ -8,11 +8,9 @@ spec:
   {{- if not .Values.web.autoscaling.enabled }}
   replicas: {{ .Values.web.replicaCount }}
   {{- end }}
-  strategy: # TODO: add support for custom strategy
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
+  {{- if .Values.web.updateStrategy }}
+  strategy: {{- toYaml .Values.web.updateStrategy | nindent 4 }}
+  {{- end }}
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   selector:
     matchLabels:
@@ -72,6 +70,10 @@ spec:
           {{- end }}
           {{- with .Values.web.readinessProbe }}
           readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.web.startupProbe }}
+          startupProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           resources:

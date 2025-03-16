@@ -1,0 +1,19 @@
+{{- if .Values.web.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "larakube.fullname" . }}-web
+  labels:
+      {{- include "larakube.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.web.pdb.minAvailable }}
+  minAvailable: {{ .Values.web.pdb.minAvailable }}
+  {{- end }}
+  {{- if .Values.web.pdb.maxUnavailable }}
+  maxUnavailable: {{ .Values.web.pdb.maxUnavailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "larakube.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: web
+{{- end }}
