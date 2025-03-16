@@ -10,11 +10,9 @@ spec:
   {{- if not $value.autoscaling.enabled }}
   replicas: {{ $value.replicaCount }}
   {{- end }}
-  strategy: # TODO: add support for custom strategy
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
+  {{- if $.Values.updateStrategy }}
+  strategy: {{- toYaml $.Values.updateStrategy | nindent 4 }}
+  {{- end }}
   revisionHistoryLimit: {{ $.Values.revisionHistoryLimit }}
   selector:
     matchLabels:

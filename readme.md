@@ -1,20 +1,27 @@
 # LaraKube
 
-Helm chart to run Laravel applications on Kubernetes (K8S).
+[LaraKube](http://www.larakube.com/) is a Helm chart to run Laravel applications on Kubernetes (K8S).
+
+Docs: [www.larakube.com](https://www.larakube.com/)
+ArtifactHUB: [](https://artifacthub.io/packages/helm/larakube/larakube) 
 
 > [!WARNING]
 > This project is currently a work-in-progress and should be used with caution.
 
 ## Features
 
-- [x] Autoscaling for web servers
+- [x] Horizontal autoscaling
 - [x] Multiple queue workers
-- [x] Autoscaling for queue workers
+- [x] K8S-native Laravel scheduler
 - [X] Ingress configuration for Traefik
 - [X] Useful middlewares for Traefik
   - [X] Redirect to HTTPS
   - [X] Compression
 - [X] Certificates management with Cert-Manager
+
+## Contributing
+
+Contributions are welcome.
 
 ## License
 

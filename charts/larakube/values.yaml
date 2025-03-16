@@ -107,8 +107,20 @@ web:
     #   cpu: 100m
     #   memory: 128Mi
 
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+
   livenessProbe: {}
   readinessProbe: {}
+  startupProbe: {}
+
+  pdb:
+    enabled: false
+    #minAvailable: 1
+    maxUnavailable: 0
 
   tolerations: []
   affinity: {}
@@ -148,8 +160,17 @@ worker:
       #   cpu: 100m
       #   memory: 128Mi
 
+    updateStrategy:
+      type: Recreate
+
     livenessProbe: {}
     readinessProbe: {}
+    startupProbe: {}
+
+    pdb:
+      enabled: false
+      #minAvailable: 1
+      maxUnavailable: 0
 
 scheduler:
   enabled: true
