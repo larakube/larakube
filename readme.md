@@ -7,11 +7,9 @@
 
 [LaraKube](http://www.larakube.com/) is a Helm chart to run Laravel applications on Kubernetes (K8S).
 
-Docs: [larakube.com](https://www.larakube.com/)  
-ArtifactHUB: [artifacthub.io](https://artifacthub.io/packages/helm/larakube/larakube) 
-
-> [!WARNING]
-> This project is currently a work-in-progress and should be used with caution.
+<br><br>
+<a href="https://www.larakube.com/"><img alt="Docs Badge" src="https://img.shields.io/badge/Docs-yellow?style=flat-square&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZT0id2hpdGUiIGNsYXNzPSJzaXplLTYiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZD0iTTEyIDYuMDQyQTguOTY3IDguOTY3IDAgMCAwIDYgMy43NWMtMS4wNTIgMC0yLjA2Mi4xOC0zIC41MTJ2MTQuMjVBOC45ODcgOC45ODcgMCAwIDEgNiAxOGMyLjMwNSAwIDQuNDA4Ljg2NyA2IDIuMjkybTAtMTQuMjVhOC45NjYgOC45NjYgMCAwIDEgNi0yLjI5MmMxLjA1MiAwIDIuMDYyLjE4IDMgLjUxMnYxNC4yNUE4Ljk4NyA4Ljk4NyAwIDAgMCAxOCAxOGE4Ljk2NyA4Ljk2NyAwIDAgMC02IDIuMjkybTAtMTQuMjV2MTQuMjUiIC8+Cjwvc3ZnPg==" height="50"></a>
+<a href="https://artifacthub.io/packages/helm/larakube/larakube"><img alt="ArtifactHUB Badge" src="https://img.shields.io/badge/ArtifactHUB-417598?style=flat-square&&logo=artifacthub&logoColor=white" height="50"></a>
 
 ## Features
 
