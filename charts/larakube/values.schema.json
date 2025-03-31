@@ -1,0 +1,946 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "affinity": {
+      "description": "Affinity rules for scheduling the pod.",
+      "required": [],
+      "title": "affinity",
+      "type": "object"
+    },
+    "databaseMigration": {
+      "description": "Database migration configuration.",
+      "properties": {
+        "enabled": {
+          "default": false,
+          "description": "Enable or disable database migrations.",
+          "required": [],
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "env": {
+          "description": "Environment variables specific to the database migration container.",
+          "required": [],
+          "title": "env",
+          "type": "object"
+        },
+        "resources": {
+          "description": "Resource requests and limits for the database migration container.",
+          "required": [],
+          "title": "resources",
+          "type": "object"
+        },
+        "retry": {
+          "default": 0,
+          "description": "The number of times to retry the database migration.",
+          "required": [],
+          "title": "retry",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "enabled",
+        "retry",
+        "env",
+        "resources"
+      ],
+      "title": "databaseMigration",
+      "type": "object"
+    },
+    "env": {
+      "description": "Environment variables to set in the container.",
+      "required": [],
+      "title": "env",
+      "type": "object"
+    },
+    "fullnameOverride": {
+      "default": "",
+      "description": "Overrides the full name of the chart.",
+      "required": [],
+      "title": "fullnameOverride",
+      "type": "string"
+    },
+    "global": {
+      "description": "Global values are values that can be accessed from any chart or subchart by exactly the same name.",
+      "required": [],
+      "title": "global",
+      "type": "object"
+    },
+    "image": {
+      "description": "The Docker image repository to use for the Laravel application.",
+      "properties": {
+        "pullPolicy": {
+          "default": "IfNotPresent",
+          "description": "The policy for pulling the Docker image (e.g., IfNotPresent, Always).",
+          "required": [],
+          "title": "pullPolicy",
+          "type": "string"
+        },
+        "repository": {
+          "default": "",
+          "required": [],
+          "title": "repository",
+          "type": "string"
+        },
+        "tag": {
+          "default": "",
+          "description": "Overrides the image tag whose default is the chart appVersion.",
+          "required": [],
+          "title": "tag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "repository",
+        "pullPolicy",
+        "tag"
+      ],
+      "title": "image",
+      "type": "object"
+    },
+    "imagePullSecrets": {
+      "description": "List of secrets to use for pulling the Docker image.",
+      "items": {
+        "required": []
+      },
+      "required": [],
+      "title": "imagePullSecrets",
+      "type": "array"
+    },
+    "ingress": {
+      "description": "Ingress configuration.",
+      "properties": {
+        "annotations": {
+          "description": "Annotations to add to the ingress resource.",
+          "required": [],
+          "title": "annotations",
+          "type": "object"
+        },
+        "className": {
+          "default": "",
+          "description": "The ingress class name.",
+          "required": [],
+          "title": "className",
+          "type": "string"
+        },
+        "enabled": {
+          "default": false,
+          "description": "Enable or disable the ingress resource.",
+          "required": [],
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "hosts": {
+          "description": "The hostname to use for the ingress.",
+          "items": {
+            "anyOf": [
+              {
+                "properties": {
+                  "host": {
+                    "default": "chart-example.local",
+                    "required": [],
+                    "title": "host",
+                    "type": "string"
+                  },
+                  "paths": {
+                    "description": "The path to use for the ingress.",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "properties": {
+                            "path": {
+                              "default": "/",
+                              "required": [],
+                              "title": "path",
+                              "type": "string"
+                            },
+                            "pathType": {
+                              "default": "ImplementationSpecific",
+                              "description": "The type of path (e.g., ImplementationSpecific, Exact, Prefix).",
+                              "required": [],
+                              "title": "pathType",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "path",
+                            "pathType"
+                          ],
+                          "type": "object"
+                        }
+                      ],
+                      "required": []
+                    },
+                    "required": [],
+                    "title": "paths",
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "host",
+                  "paths"
+                ],
+                "type": "object"
+              }
+            ],
+            "required": []
+          },
+          "required": [],
+          "title": "hosts",
+          "type": "array"
+        },
+        "tls": {
+          "description": "TLS configuration for the ingress.",
+          "items": {
+            "required": []
+          },
+          "required": [],
+          "title": "tls",
+          "type": "array"
+        }
+      },
+      "required": [
+        "enabled",
+        "className",
+        "annotations",
+        "hosts",
+        "tls"
+      ],
+      "title": "ingress",
+      "type": "object"
+    },
+    "nameOverride": {
+      "default": "",
+      "description": "Overrides the name of the chart.",
+      "required": [],
+      "title": "nameOverride",
+      "type": "string"
+    },
+    "nodeSelector": {
+      "description": "Node selector for scheduling the pod.",
+      "required": [],
+      "title": "nodeSelector",
+      "type": "object"
+    },
+    "podAnnotations": {
+      "description": "Annotations to add to the pod.",
+      "required": [],
+      "title": "podAnnotations",
+      "type": "object"
+    },
+    "podLabels": {
+      "description": "Labels to add to the pod.",
+      "required": [],
+      "title": "podLabels",
+      "type": "object"
+    },
+    "podSecurityContext": {
+      "description": "Security context for the pod.",
+      "required": [],
+      "title": "podSecurityContext",
+      "type": "object"
+    },
+    "revisionHistoryLimit": {
+      "default": 2,
+      "description": "The number of old ReplicaSets to retain.",
+      "required": [],
+      "title": "revisionHistoryLimit",
+      "type": "integer"
+    },
+    "scheduler": {
+      "description": "Scheduler configuration.",
+      "properties": {
+        "command": {
+          "description": "The command to run the scheduler.",
+          "items": {
+            "anyOf": [
+              {
+                "required": [],
+                "type": "string"
+              },
+              {
+                "required": [],
+                "type": "string"
+              },
+              {
+                "required": [],
+                "type": "string"
+              }
+            ],
+            "required": []
+          },
+          "required": [],
+          "title": "command",
+          "type": "array"
+        },
+        "enabled": {
+          "default": true,
+          "description": "Enable or disable the scheduler.",
+          "required": [],
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "env": {
+          "description": "Environment variables specific to the scheduler container.",
+          "required": [],
+          "title": "env",
+          "type": "object"
+        },
+        "resources": {
+          "description": "Resource requests and limits for the scheduler container.",
+          "required": [],
+          "title": "resources",
+          "type": "object"
+        },
+        "schedule": {
+          "default": "* * * * *",
+          "description": "The schedule for the scheduler (e.g., every minute).",
+          "required": [],
+          "title": "schedule",
+          "type": "string"
+        }
+      },
+      "required": [
+        "enabled",
+        "schedule",
+        "command",
+        "env",
+        "resources"
+      ],
+      "title": "scheduler",
+      "type": "object"
+    },
+    "secretEnvs": {
+      "description": "Secret environment variables to set in the container.",
+      "items": {
+        "required": []
+      },
+      "required": [],
+      "title": "secretEnvs",
+      "type": "array"
+    },
+    "securityContext": {
+      "description": "Security context for the container.",
+      "required": [],
+      "title": "securityContext",
+      "type": "object"
+    },
+    "service": {
+      "description": "Service configuration.",
+      "properties": {
+        "containerPort": {
+          "default": 8000,
+          "description": "The port on which the container will listen.",
+          "required": [],
+          "title": "containerPort",
+          "type": "integer"
+        },
+        "port": {
+          "default": 80,
+          "description": "The port on which the service will be exposed.",
+          "required": [],
+          "title": "port",
+          "type": "integer"
+        },
+        "type": {
+          "default": "ClusterIP",
+          "description": "The type of service (e.g., ClusterIP, NodePort, LoadBalancer).",
+          "required": [],
+          "title": "type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "port",
+        "containerPort"
+      ],
+      "title": "service",
+      "type": "object"
+    },
+    "serviceAccount": {
+      "description": "Service account configuration.",
+      "properties": {
+        "annotations": {
+          "description": "Annotations to add to the service account.",
+          "required": [],
+          "title": "annotations",
+          "type": "object"
+        },
+        "automount": {
+          "default": true,
+          "description": "Automatically mount a ServiceAccount's API credentials?",
+          "required": [],
+          "title": "automount",
+          "type": "boolean"
+        },
+        "create": {
+          "default": true,
+          "description": "Specifies whether a service account should be created.",
+          "required": [],
+          "title": "create",
+          "type": "boolean"
+        },
+        "name": {
+          "default": "",
+          "description": "The name of the service account to use. If not set and create is true, a name is generated using the fullname template.",
+          "required": [],
+          "title": "name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "create",
+        "automount",
+        "annotations",
+        "name"
+      ],
+      "title": "serviceAccount",
+      "type": "object"
+    },
+    "tolerations": {
+      "description": "Tolerations for scheduling the pod.",
+      "items": {
+        "required": []
+      },
+      "required": [],
+      "title": "tolerations",
+      "type": "array"
+    },
+    "topologySpreadConstraints": {
+      "description": "Topology spread constraints for scheduling the pod.",
+      "items": {
+        "required": []
+      },
+      "required": [],
+      "title": "topologySpreadConstraints",
+      "type": "array"
+    },
+    "volumeMounts": {
+      "description": "Additional volumeMounts on the output Deployment definition.",
+      "items": {
+        "required": []
+      },
+      "required": [],
+      "title": "volumeMounts",
+      "type": "array"
+    },
+    "volumes": {
+      "description": "Additional volumes on the output Deployment definition.",
+      "items": {
+        "required": []
+      },
+      "required": [],
+      "title": "volumes",
+      "type": "array"
+    },
+    "web": {
+      "description": "Web deployment configuration.",
+      "properties": {
+        "affinity": {
+          "description": "Affinity rules for the web deployment.",
+          "required": [],
+          "title": "affinity",
+          "type": "object"
+        },
+        "autoscaling": {
+          "description": "Autoscaling configuration for the web deployment.",
+          "properties": {
+            "enabled": {
+              "default": false,
+              "description": "Enable or disable autoscaling for the web deployment.",
+              "required": [],
+              "title": "enabled",
+              "type": "boolean"
+            },
+            "maxReplicas": {
+              "default": 100,
+              "description": "The maximum number of replicas for autoscaling.",
+              "required": [],
+              "title": "maxReplicas",
+              "type": "integer"
+            },
+            "minReplicas": {
+              "default": 1,
+              "description": "The minimum number of replicas for autoscaling.",
+              "required": [],
+              "title": "minReplicas",
+              "type": "integer"
+            },
+            "targetCPUUtilizationPercentage": {
+              "default": 80,
+              "description": "The target CPU utilization percentage for autoscaling.",
+              "required": [],
+              "title": "targetCPUUtilizationPercentage",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "enabled",
+            "minReplicas",
+            "maxReplicas",
+            "targetCPUUtilizationPercentage"
+          ],
+          "title": "autoscaling",
+          "type": "object"
+        },
+        "certManager": {
+          "description": "Cert-Manager configuration for managing TLS certificates.",
+          "properties": {
+            "domains": {
+              "description": "The domains to use for Cert-Manager.",
+              "items": {
+                "required": []
+              },
+              "required": [],
+              "title": "domains",
+              "type": "array"
+            },
+            "enabled": {
+              "default": false,
+              "description": "Enable or disable Cert-Manager.",
+              "required": [],
+              "title": "enabled",
+              "type": "boolean"
+            },
+            "issuer": {
+              "default": "",
+              "description": "The issuer to use for Cert-Manager.",
+              "required": [],
+              "title": "issuer",
+              "type": "string"
+            }
+          },
+          "required": [
+            "enabled",
+            "issuer",
+            "domains"
+          ],
+          "title": "certManager",
+          "type": "object"
+        },
+        "env": {
+          "description": "Environment variables specific to the web container.",
+          "required": [],
+          "title": "env",
+          "type": "object"
+        },
+        "livenessProbe": {
+          "description": "Liveness probe configuration for the web container.",
+          "required": [],
+          "title": "livenessProbe",
+          "type": "object"
+        },
+        "pdb": {
+          "description": "PodDisruptionBudget configuration for the web deployment.",
+          "properties": {
+            "enabled": {
+              "default": false,
+              "description": "Enable or disable the PodDisruptionBudget for the web deployment.",
+              "required": [],
+              "title": "enabled",
+              "type": "boolean"
+            },
+            "maxUnavailable": {
+              "default": 0,
+              "description": "The maximum number of pods that can be unavailable during a disruption.\nminAvailable: 1",
+              "required": [],
+              "title": "maxUnavailable",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "enabled",
+            "maxUnavailable"
+          ],
+          "title": "pdb",
+          "type": "object"
+        },
+        "readinessProbe": {
+          "description": "Readiness probe configuration for the web container.",
+          "required": [],
+          "title": "readinessProbe",
+          "type": "object"
+        },
+        "replicaCount": {
+          "default": 1,
+          "description": "The number of replicas for the web deployment.",
+          "required": [],
+          "title": "replicaCount",
+          "type": "integer"
+        },
+        "resources": {
+          "description": "Resource requests and limits for the web container.",
+          "required": [],
+          "title": "resources",
+          "type": "object"
+        },
+        "startupProbe": {
+          "description": "Startup probe configuration for the web container.",
+          "required": [],
+          "title": "startupProbe",
+          "type": "object"
+        },
+        "tolerations": {
+          "description": "Tolerations for the web deployment.",
+          "items": {
+            "required": []
+          },
+          "required": [],
+          "title": "tolerations",
+          "type": "array"
+        },
+        "topologySpreadConstraints": {
+          "description": "Topology spread constraints for the web deployment.",
+          "items": {
+            "required": []
+          },
+          "required": [],
+          "title": "topologySpreadConstraints",
+          "type": "array"
+        },
+        "traefik": {
+          "description": "Traefik ingress configuration.",
+          "properties": {
+            "basicAuth": {
+              "description": "Configuration for basic authentication",
+              "properties": {
+                "enabled": {
+                  "default": false,
+                  "description": "Enable or disable basic authentication for Traefik.",
+                  "required": [],
+                  "title": "enabled",
+                  "type": "boolean"
+                },
+                "realm": {
+                  "default": "",
+                  "description": "Basic auth realm (f.e. name of the site that you are restricting access to)",
+                  "required": [],
+                  "title": "realm",
+                  "type": "string"
+                },
+                "secret": {
+                  "default": "",
+                  "description": "Name of the secret that contains the user credentials. See https://doc.traefik.io/traefik/middlewares/http/basicauth/#users for more info",
+                  "required": [],
+                  "title": "secret",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "enabled",
+                "secret",
+                "realm"
+              ],
+              "title": "basicAuth",
+              "type": "object"
+            },
+            "compress": {
+              "default": true,
+              "description": "Enable or disable compression for Traefik.",
+              "required": [],
+              "title": "compress",
+              "type": "boolean"
+            },
+            "customRequestHeaders": {
+              "description": "Custom request headers to use for Traefik.",
+              "required": [],
+              "title": "customRequestHeaders",
+              "type": "object"
+            },
+            "customResponseHeaders": {
+              "description": "Custom response headers to use for Traefik.",
+              "required": [],
+              "title": "customResponseHeaders",
+              "type": "object"
+            },
+            "domain": {
+              "default": "",
+              "description": "The domain to use for Traefik.",
+              "required": [],
+              "title": "domain",
+              "type": "string"
+            },
+            "domainRedirects": {
+              "description": "Domains that redirect to the main domain (f.e. redirect www to non-www)\nPlease keep in mind that the certificate need include this domain as well.\nExample:\n - domain: www.some-site.test",
+              "items": {
+                "properties": {
+                  "domain": {
+                    "required": [],
+                    "type": "string"
+                  }
+                },
+                "required": [],
+                "type": "object"
+              },
+              "required": [],
+              "title": "domainRedirects",
+              "type": "array"
+            },
+            "enabled": {
+              "default": false,
+              "description": "Enable or disable Traefik ingress.",
+              "required": [],
+              "title": "enabled",
+              "type": "boolean"
+            },
+            "extraMiddlewares": {
+              "description": "Extra middlewares to use for Traefik.",
+              "items": {
+                "required": []
+              },
+              "required": [],
+              "title": "extraMiddlewares",
+              "type": "array"
+            }
+          },
+          "required": [
+            "enabled",
+            "compress",
+            "domain",
+            "extraMiddlewares",
+            "customRequestHeaders",
+            "customResponseHeaders",
+            "basicAuth"
+          ],
+          "title": "traefik",
+          "type": "object"
+        },
+        "updateStrategy": {
+          "description": "Update strategy for the web deployment.",
+          "properties": {
+            "rollingUpdate": {
+              "description": "Rolling update configuration.",
+              "properties": {
+                "maxSurge": {
+                  "default": 1,
+                  "description": "The maximum number of pods that can be created above the desired number of pods during an update.",
+                  "required": [],
+                  "title": "maxSurge",
+                  "type": "integer"
+                },
+                "maxUnavailable": {
+                  "default": 0,
+                  "description": "The maximum number of pods that can be unavailable during an update.",
+                  "required": [],
+                  "title": "maxUnavailable",
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "maxSurge",
+                "maxUnavailable"
+              ],
+              "title": "rollingUpdate",
+              "type": "object"
+            },
+            "type": {
+              "default": "RollingUpdate",
+              "description": "The update strategy for the web deployment (e.g., RollingUpdate, Recreate).",
+              "required": [],
+              "title": "type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "rollingUpdate"
+          ],
+          "title": "updateStrategy",
+          "type": "object"
+        }
+      },
+      "required": [
+        "env",
+        "replicaCount",
+        "autoscaling",
+        "resources",
+        "updateStrategy",
+        "livenessProbe",
+        "readinessProbe",
+        "startupProbe",
+        "pdb",
+        "tolerations",
+        "affinity",
+        "topologySpreadConstraints",
+        "certManager",
+        "traefik"
+      ],
+      "title": "web",
+      "type": "object"
+    },
+    "worker": {
+      "description": "Worker deployment configuration.",
+      "properties": {
+        "default": {
+          "properties": {
+            "autoscaling": {
+              "description": "Autoscaling configuration for the worker deployment.",
+              "properties": {
+                "enabled": {
+                  "default": false,
+                  "description": "Enable or disable autoscaling for the worker deployment.",
+                  "required": [],
+                  "title": "enabled",
+                  "type": "boolean"
+                },
+                "maxReplicas": {
+                  "default": 100,
+                  "description": "The maximum number of replicas for autoscaling.",
+                  "required": [],
+                  "title": "maxReplicas",
+                  "type": "integer"
+                },
+                "minReplicas": {
+                  "default": 1,
+                  "description": "The minimum number of replicas for autoscaling.",
+                  "required": [],
+                  "title": "minReplicas",
+                  "type": "integer"
+                },
+                "targetCPUUtilizationPercentage": {
+                  "default": 80,
+                  "description": "The target CPU utilization percentage for autoscaling.",
+                  "required": [],
+                  "title": "targetCPUUtilizationPercentage",
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "enabled",
+                "minReplicas",
+                "maxReplicas",
+                "targetCPUUtilizationPercentage"
+              ],
+              "title": "autoscaling",
+              "type": "object"
+            },
+            "env": {
+              "description": "Environment variables specific to the worker container.",
+              "required": [],
+              "title": "env",
+              "type": "object"
+            },
+            "livenessProbe": {
+              "description": "Liveness probe configuration for the worker container.",
+              "required": [],
+              "title": "livenessProbe",
+              "type": "object"
+            },
+            "pdb": {
+              "description": "PodDisruptionBudget configuration for the worker deployment.",
+              "properties": {
+                "enabled": {
+                  "default": false,
+                  "description": "Enable or disable the PodDisruptionBudget for the worker deployment.",
+                  "required": [],
+                  "title": "enabled",
+                  "type": "boolean"
+                },
+                "maxUnavailable": {
+                  "default": 0,
+                  "description": "The maximum number of pods that can be unavailable during a disruption.\nminAvailable: 1",
+                  "required": [],
+                  "title": "maxUnavailable",
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "enabled",
+                "maxUnavailable"
+              ],
+              "title": "pdb",
+              "type": "object"
+            },
+            "readinessProbe": {
+              "description": "Readiness probe configuration for the worker container.",
+              "required": [],
+              "title": "readinessProbe",
+              "type": "object"
+            },
+            "replicaCount": {
+              "default": 1,
+              "description": "The number of replicas for the worker deployment.",
+              "required": [],
+              "title": "replicaCount",
+              "type": "integer"
+            },
+            "resources": {
+              "description": "Resource requests and limits for the worker container.",
+              "required": [],
+              "title": "resources",
+              "type": "object"
+            },
+            "startupProbe": {
+              "description": "Startup probe configuration for the worker container.",
+              "required": [],
+              "title": "startupProbe",
+              "type": "object"
+            },
+            "updateStrategy": {
+              "description": "Update strategy for the worker deployment.",
+              "properties": {
+                "type": {
+                  "default": "Recreate",
+                  "description": "The update strategy for the worker deployment (e.g., RollingUpdate, Recreate).",
+                  "required": [],
+                  "title": "type",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "title": "updateStrategy",
+              "type": "object"
+            }
+          },
+          "required": [
+            "replicaCount",
+            "autoscaling",
+            "env",
+            "resources",
+            "updateStrategy",
+            "livenessProbe",
+            "readinessProbe",
+            "startupProbe",
+            "pdb"
+          ],
+          "title": "default",
+          "type": "object"
+        }
+      },
+      "required": [
+        "default"
+      ],
+      "title": "worker",
+      "type": "object"
+    }
+  },
+  "required": [
+    "image",
+    "imagePullSecrets",
+    "nameOverride",
+    "fullnameOverride",
+    "serviceAccount",
+    "podAnnotations",
+    "podLabels",
+    "podSecurityContext",
+    "securityContext",
+    "service",
+    "ingress",
+    "volumes",
+    "volumeMounts",
+    "nodeSelector",
+    "tolerations",
+    "affinity",
+    "topologySpreadConstraints",
+    "revisionHistoryLimit",
+    "env",
+    "secretEnvs",
+    "web",
+    "worker",
+    "scheduler",
+    "databaseMigration"
+  ],
+  "type": "object"
+}

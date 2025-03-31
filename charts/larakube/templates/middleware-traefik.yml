@@ -9,6 +9,7 @@ spec:
   compress:
     minResponseBodyBytes: 1200
 ---
+{{- if or .Values.web.traefik.customRequestHeaders .Values.web.traefik.customResponseHeaders }}
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
@@ -26,6 +27,7 @@ spec:
       {{- toYaml . | nindent 6 }}
     {{- end }}
 ---
+{{- end }}
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
@@ -37,4 +39,27 @@ spec:
     scheme: https
     permanent: true
 ---
+{{- if .Values.web.traefik.basicAuth.enabled }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "larakube.fullname" . }}-traefik-middleware-basic-auth
+spec:
+  basicAuth:
+    secret: {{ .Values.web.traefik.basicAuth.secret }}
+    realm: {{ .Values.web.traefik.basicAuth.realm }}
+---
+{{- end }}
+{{- range $i, $value := .Values.web.traefik.domainRedirects }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "larakube.fullname" $ }}-traefik-middleware-domain-redirect-{{ $value.domain | replace "." "-" | kebabcase }}
+spec:
+  redirectRegex:
+    regex: "^https?://{{ $value.domain }}/(.*)"
+    replacement: "https://{{ $.Values.web.traefik.domain }}/${1}"
+    permanent: true
+---
+{{- end }}
 {{- end }}

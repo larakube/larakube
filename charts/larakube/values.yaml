@@ -2,99 +2,162 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# -- The Docker image repository to use for the Laravel application.
 image:
   repository: ""
+
+  # -- The policy for pulling the Docker image (e.g., IfNotPresent, Always).
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
+
+  # -- Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
+# -- List of secrets to use for pulling the Docker image.
 imagePullSecrets: []
+
+# -- Overrides the name of the chart.
 nameOverride: ""
+
+# -- Overrides the full name of the chart.
 fullnameOverride: ""
 
+# -- Service account configuration.
 serviceAccount:
-  # Specifies whether a service account should be created
+
+  # -- Specifies whether a service account should be created.
   create: true
-  # Automatically mount a ServiceAccount's API credentials?
+
+  # -- Automatically mount a ServiceAccount's API credentials?
   automount: true
-  # Annotations to add to the service account
+
+  # -- Annotations to add to the service account.
   annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
+
+  # -- The name of the service account to use. If not set and create is true, a name is generated using the fullname template.
   name: ""
 
+# -- Annotations to add to the pod.
 podAnnotations: {}
+
+# -- Labels to add to the pod.
 podLabels: {}
 
+# -- Security context for the pod.
 podSecurityContext: {}
-  # fsGroup: 2000
+# fsGroup: 2000
 
+# -- Security context for the container.
 securityContext: {}
   # capabilities:
   #   drop:
   #   - ALL
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
-  # runAsUser: 1000
+# runAsUser: 1000
 
+# -- Service configuration.
 service:
+
+  # -- The type of service (e.g., ClusterIP, NodePort, LoadBalancer).
   type: ClusterIP
+
+  # -- The port on which the service will be exposed.
   port: 80
+
+  # -- The port on which the container will listen.
   containerPort: 8000
 
+# -- Ingress configuration.
 ingress:
+
+  # -- Enable or disable the ingress resource.
   enabled: false
+
+  # -- The ingress class name.
   className: ""
+
+  # -- Annotations to add to the ingress resource.
   annotations: {}
     # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  # kubernetes.io/tls-acme: "true"
+
+  # -- The hostname to use for the ingress.
   hosts:
     - host: chart-example.local
+
+      # -- The path to use for the ingress.
       paths:
         - path: /
+
+          # -- The type of path (e.g., ImplementationSpecific, Exact, Prefix).
           pathType: ImplementationSpecific
+
+  # -- TLS configuration for the ingress.
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
-# Additional volumes on the output Deployment definition.
+# -- Additional volumes on the output Deployment definition.
 volumes: []
 # - name: foo
 #   secret:
 #     secretName: mysecret
 #     optional: false
 
-# Additional volumeMounts on the output Deployment definition.
+# -- Additional volumeMounts on the output Deployment definition.
 volumeMounts: []
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
 
+# -- Node selector for scheduling the pod.
 nodeSelector: {}
 
+# -- Tolerations for scheduling the pod.
 tolerations: []
 
+# -- Affinity rules for scheduling the pod.
 affinity: {}
 
+# -- Topology spread constraints for scheduling the pod.
 topologySpreadConstraints: []
 
+# -- The number of old ReplicaSets to retain.
 revisionHistoryLimit: 2
 
+# -- Environment variables to set in the container.
 env: {}
 
+# -- Secret environment variables to set in the container.
 secretEnvs: []
 
+# -- Web deployment configuration.
 web:
+
+  # -- Environment variables specific to the web container.
   env: {}
+
+  # -- The number of replicas for the web deployment.
   replicaCount: 1
+
+  # -- Autoscaling configuration for the web deployment.
   autoscaling:
+
+    # -- Enable or disable autoscaling for the web deployment.
     enabled: false
+
+    # -- The minimum number of replicas for autoscaling.
     minReplicas: 1
+
+    # -- The maximum number of replicas for autoscaling.
     maxReplicas: 100
+
+    # -- The target CPU utilization percentage for autoscaling.
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
 
+  # -- Resource requests and limits for the web container.
   resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
@@ -105,50 +168,134 @@ web:
     #   memory: 128Mi
     # requests:
     #   cpu: 100m
-    #   memory: 128Mi
+  #   memory: 128Mi
 
+  # -- Update strategy for the web deployment.
   updateStrategy:
+
+    # -- The update strategy for the web deployment (e.g., RollingUpdate, Recreate).
     type: RollingUpdate
+
+    # -- Rolling update configuration.
     rollingUpdate:
+
+      # -- The maximum number of pods that can be created above the desired number of pods during an update.
       maxSurge: 1
+
+      # -- The maximum number of pods that can be unavailable during an update.
       maxUnavailable: 0
 
+  # -- Liveness probe configuration for the web container.
   livenessProbe: {}
+
+  # -- Readiness probe configuration for the web container.
   readinessProbe: {}
+
+  # -- Startup probe configuration for the web container.
   startupProbe: {}
 
+  # -- PodDisruptionBudget configuration for the web deployment.
   pdb:
+
+    # -- Enable or disable the PodDisruptionBudget for the web deployment.
     enabled: false
+
+    # -- The maximum number of pods that can be unavailable during a disruption.
     #minAvailable: 1
     maxUnavailable: 0
 
+  # -- Tolerations for the web deployment.
   tolerations: []
+
+  # -- Affinity rules for the web deployment.
   affinity: {}
+
+  # -- Topology spread constraints for the web deployment.
   topologySpreadConstraints: []
 
+  # -- Cert-Manager configuration for managing TLS certificates.
   certManager:
+
+    # -- Enable or disable Cert-Manager.
     enabled: false
+
+    # -- The issuer to use for Cert-Manager.
     issuer: ""
+
+    # -- The domains to use for Cert-Manager.
     domains: []
 
+  # -- Traefik ingress configuration.
   traefik:
+
+    # -- Enable or disable Traefik ingress.
     enabled: false
+
+    # -- Enable or disable compression for Traefik.
     compress: true
+
+    # -- The domain to use for Traefik.
     domain: ""
+
+    # -- Extra middlewares to use for Traefik.
     extraMiddlewares: []
+
+    # -- Custom request headers to use for Traefik.
     customRequestHeaders: {}
+
+    # -- Custom response headers to use for Traefik.
     customResponseHeaders: {}
 
+    # -- Configuration for basic authentication
+    basicAuth:
+      # -- Enable or disable basic authentication for Traefik.
+      enabled: false
+      # -- Name of the secret that contains the user credentials. See https://doc.traefik.io/traefik/middlewares/http/basicauth/#users for more info
+      secret: ""
+      # -- Basic auth realm (f.e. name of the site that you are restricting access to)
+      realm: ""
+
+    # @schema
+    # type: array
+    # items:
+    #   type: object
+    #   properties:
+    #     domain:
+    #       type: string
+    # @schema
+    # -- Domains that redirect to the main domain (f.e. redirect www to non-www)
+    # Please keep in mind that the certificate need include this domain as well.
+    # Example:
+    #  - domain: www.some-site.test
+    domainRedirects: []
+
+# -- Worker deployment configuration.
 worker:
   default:
+
+    # -- The number of replicas for the worker deployment.
     replicaCount: 1
+
+    # -- Autoscaling configuration for the worker deployment.
     autoscaling:
+
+      # -- Enable or disable autoscaling for the worker deployment.
       enabled: false
+
+      # -- The minimum number of replicas for autoscaling.
       minReplicas: 1
+
+      # -- The maximum number of replicas for autoscaling.
       maxReplicas: 100
+
+      # -- The target CPU utilization percentage for autoscaling.
       targetCPUUtilizationPercentage: 80
       # targetMemoryUtilizationPercentage: 80
+
+    # -- Environment variables specific to the worker container.
     env: { }
+
+    # -- Resource requests and limits for the worker container.
     resources: { }
       # We usually recommend not to specify default resources and to leave this as a conscious
       # choice for the user. This also increases chances charts run on environments with little
@@ -159,28 +306,52 @@ worker:
       #   memory: 128Mi
       # requests:
       #   cpu: 100m
-      #   memory: 128Mi
+    #   memory: 128Mi
 
+    # -- Update strategy for the worker deployment.
     updateStrategy:
+
+      # -- The update strategy for the worker deployment (e.g., RollingUpdate, Recreate).
       type: Recreate
 
+    # -- Liveness probe configuration for the worker container.
     livenessProbe: {}
+
+    # -- Readiness probe configuration for the worker container.
     readinessProbe: {}
+
+    # -- Startup probe configuration for the worker container.
     startupProbe: {}
 
+    # -- PodDisruptionBudget configuration for the worker deployment.
     pdb:
+
+      # -- Enable or disable the PodDisruptionBudget for the worker deployment.
       enabled: false
+
+      # -- The maximum number of pods that can be unavailable during a disruption.
       #minAvailable: 1
       maxUnavailable: 0
 
+# -- Scheduler configuration.
 scheduler:
+
+  # -- Enable or disable the scheduler.
   enabled: true
-  schedule: "* * * * *" # every minute
+
+  # -- The schedule for the scheduler (e.g., every minute).
+  schedule: "* * * * *"
+
+  # -- The command to run the scheduler.
   command:
     - /bin/sh
     - -c
     - php artisan schedule:run
+
+  # -- Environment variables specific to the scheduler container.
   env: { }
+
+  # -- Resource requests and limits for the scheduler container.
   resources: { }
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
@@ -191,10 +362,19 @@ scheduler:
     #   memory: 128Mi
     # requests:
     #   cpu: 100m
-    #   memory: 128Mi
+  #   memory: 128Mi
 
+# -- Database migration configuration.
 databaseMigration:
+
+  # -- Enable or disable database migrations.
   enabled: false
+
+  # -- The number of times to retry the database migration.
   retry: 0
+
+  # -- Environment variables specific to the database migration container.
   env: { }
+
+  # -- Resource requests and limits for the database migration container.
   resources: { }

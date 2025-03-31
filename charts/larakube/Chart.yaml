@@ -22,3 +22,10 @@ version: 0.1.1
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "1.0.0"
+icon: https://raw.githubusercontent.com/solidtime-io/larakube/main/charts/larakube/icon.png
+home: https://www.larakube.com
+sources:
+  - https://github.com/solidtime-io/larakube/tree/main/charts/larakube
+keywords:
+  - laravel
+  - php

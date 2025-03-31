@@ -15,8 +15,15 @@ spec:
         - name: {{ include "larakube.fullname" . }}-web
           port: {{ .Values.service.port }}
       middlewares:
-        - name: {{ include "larakube.fullname" . }}-traefik-middleware-compress
+        {{- if or .Values.web.traefik.customRequestHeaders .Values.web.traefik.customResponseHeaders }}
         - name: {{ include "larakube.fullname" . }}-traefik-middleware-custom-headers
+        {{- end }}
+        {{- if .Values.web.traefik.compress }}
+        - name: {{ include "larakube.fullname" . }}-traefik-middleware-compress
+        {{- end }}
+        {{- if .Values.web.traefik.basicAuth.enabled }}
+        - name: {{ include "larakube.fullname" . }}-traefik-middleware-basic-auth
+        {{- end }}
         {{- range $key, $value := .Values.web.traefik.extraMiddlewares }}
         - name: {{ $value }}
         {{- end }}
@@ -36,8 +43,49 @@ spec:
     - match: Host(`{{ .Values.web.traefik.domain }}`)
       kind: Rule
       services:
-        - name: {{ include "larakube.fullname" . }}-web
-          port: {{ .Values.service.port }}
+        - name: noop@internal
+          kind: TraefikService
       middlewares:
         - name: {{ include "larakube.fullname" . }}-traefik-middleware-permanent-redirect-https
+---
+{{- range $i, $value := .Values.web.traefik.domainRedirects }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "larakube.fullname" $ }}-traefik-ingress-https-domain-redirect-{{ $value.domain | replace "." "-" | kebabcase }}
+  labels:
+    {{- include "larakube.labels" $ | nindent 4 }}
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`{{ $value.domain }}`)
+      kind: Rule
+      services:
+        - name: noop@internal
+          kind: TraefikService
+      middlewares:
+        - name: {{ include "larakube.fullname" $ }}-traefik-middleware-domain-redirect-{{ $value.domain | replace "." "-" | kebabcase }}
+  tls:
+    secretName: {{ include "larakube.fullname" $ }}-cert-secret
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "larakube.fullname" $ }}-traefik-ingress-http-domain-redirect-{{ $value.domain | replace "." "-" | kebabcase }}
+  labels:
+    {{- include "larakube.labels" $ | nindent 4 }}
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`{{ $value.domain }}`)
+      kind: Rule
+      services:
+        - name: noop@internal
+          kind: TraefikService
+      middlewares:
+        - name: {{ include "larakube.fullname" $ }}-traefik-middleware-domain-redirect-{{ $value.domain | replace "." "-" | kebabcase }}
+---
+{{- end }}
 {{- end }}
