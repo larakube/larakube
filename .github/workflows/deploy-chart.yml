@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: "Create deployment folder"
-        run: mkdir -p ./build && cp index.yaml ./build && cp index.html ./build
+        run: mkdir -p ./build && cp index.yaml ./build && cp index.html ./build && cp artifacthub-repo.yml ./build
 
       - name: "Setup PHP with PECL extension"
         uses: shivammathur/setup-php@v2
