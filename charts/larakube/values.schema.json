@@ -716,20 +716,23 @@
                   "description": "The maximum number of pods that can be created above the desired number of pods during an update.",
                   "required": [],
                   "title": "maxSurge",
-                  "type": "integer"
+                  "type": [
+                    "string",
+                    "integer"
+                  ]
                 },
                 "maxUnavailable": {
                   "default": 0,
                   "description": "The maximum number of pods that can be unavailable during an update.",
                   "required": [],
                   "title": "maxUnavailable",
-                  "type": "integer"
+                  "type": [
+                    "string",
+                    "integer"
+                  ]
                 }
               },
-              "required": [
-                "maxSurge",
-                "maxUnavailable"
-              ],
+              "required": [],
               "title": "rollingUpdate",
               "type": "object"
             },

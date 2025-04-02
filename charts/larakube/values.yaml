@@ -179,9 +179,15 @@ web:
     # -- Rolling update configuration.
     rollingUpdate:
 
+      # @schema
+      # type: [string, integer]
+      # @schema
       # -- The maximum number of pods that can be created above the desired number of pods during an update.
       maxSurge: 1
 
+      # @schema
+      # type: [string, integer]
+      # @schema
       # -- The maximum number of pods that can be unavailable during an update.
       maxUnavailable: 0
 
