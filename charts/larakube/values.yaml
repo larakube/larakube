@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# -- The Docker image repository to use for the Laravel application.
+# The Docker image repository to use for the Laravel application.
 image:
   repository: ""
 
@@ -21,7 +21,7 @@ nameOverride: ""
 # -- Overrides the full name of the chart.
 fullnameOverride: ""
 
-# -- Service account configuration.
+# Service account configuration.
 serviceAccount:
 
   # -- Specifies whether a service account should be created.
@@ -55,7 +55,7 @@ securityContext: {}
   # runAsNonRoot: true
 # runAsUser: 1000
 
-# -- Service configuration.
+# Service configuration.
 service:
 
   # -- The type of service (e.g., ClusterIP, NodePort, LoadBalancer).
@@ -67,7 +67,7 @@ service:
   # -- The port on which the container will listen.
   containerPort: 8000
 
-# -- Ingress configuration.
+# Ingress configuration.
 ingress:
 
   # -- Enable or disable the ingress resource.
@@ -132,7 +132,7 @@ env: {}
 # -- Secret environment variables to set in the container.
 secretEnvs: []
 
-# -- Web deployment configuration.
+# Web deployment configuration.
 web:
 
   # -- Environment variables specific to the web container.
@@ -231,7 +231,7 @@ web:
     # -- The domains to use for Cert-Manager.
     domains: []
 
-  # -- Traefik ingress configuration.
+  # Traefik ingress configuration.
   traefik:
 
     # -- Enable or disable Traefik ingress.
@@ -275,7 +275,7 @@ web:
     #  - domain: www.some-site.test
     domainRedirects: []
 
-# -- Worker deployment configuration.
+# Worker deployment configuration.
 worker:
   default:
 
@@ -314,7 +314,7 @@ worker:
       #   cpu: 100m
     #   memory: 128Mi
 
-    # -- Update strategy for the worker deployment.
+    # Update strategy for the worker deployment.
     updateStrategy:
 
       # -- The update strategy for the worker deployment (e.g., RollingUpdate, Recreate).
@@ -329,7 +329,7 @@ worker:
     # -- Startup probe configuration for the worker container.
     startupProbe: {}
 
-    # -- PodDisruptionBudget configuration for the worker deployment.
+    # PodDisruptionBudget configuration for the worker deployment.
     pdb:
 
       # -- Enable or disable the PodDisruptionBudget for the worker deployment.
@@ -339,7 +339,7 @@ worker:
       #minAvailable: 1
       maxUnavailable: 0
 
-# -- Scheduler configuration.
+# Scheduler configuration.
 scheduler:
 
   # -- Enable or disable the scheduler.
@@ -370,7 +370,7 @@ scheduler:
     #   cpu: 100m
   #   memory: 128Mi
 
-# -- Database migration configuration.
+# Database migration configuration.
 databaseMigration:
 
   # -- Enable or disable database migrations.
