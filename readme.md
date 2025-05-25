@@ -1,7 +1,7 @@
 ![ArtifactHUB](https://img.shields.io/endpoint?url=https%3A%2F%2Fartifacthub.io%2Fbadge%2Frepository%2Flarakube&style=flat-square)
-![GitHub License](https://img.shields.io/github/license/solidtime-io/larakube?style=flat-square)
-![GitHub Release](https://img.shields.io/github/v/release/solidtime-io/larakube?style=flat-square)
-![GitHub Actions Workflow Status - Lint](https://img.shields.io/github/actions/workflow/status/solidtime-io/larakube/lint.yml?style=flat-square&label=Lint)
+![GitHub License](https://img.shields.io/github/license/larakube/larakube?style=flat-square)
+![GitHub Release](https://img.shields.io/github/v/release/larakube/larakube?style=flat-square)
+![GitHub Actions Workflow Status - Lint](https://img.shields.io/github/actions/workflow/status/larakube/larakube/lint.yml?style=flat-square&label=Lint)
 
 # LaraKube
 
@@ -29,3 +29,7 @@ Contributions are welcome.
 ## License
 
 This project is licensed under the Apache License 2.0. Please see [license file](license.md) for more information.
+
+## Credits
+
+Thanks to [mrbenosborne](https://github.com/mrbenosborne) for donating the "larakube" GitHub organization name.

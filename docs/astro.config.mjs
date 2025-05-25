@@ -8,11 +8,11 @@ export default defineConfig({
 		starlight({
 			title: 'LaraKube',
 			social: {
-				github: 'https://github.com/solidtime-io/larakube',
+				github: 'https://github.com/larakube/larakube',
 			},
 			lastUpdated: true,
 			editLink: {
-				baseUrl: 'https://github.com/solidtime-io/larakube/edit/main/docs/',
+				baseUrl: 'https://github.com/larakube/larakube/edit/main/docs/',
 			},
 			sidebar: [
 				{
