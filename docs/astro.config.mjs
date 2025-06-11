@@ -20,6 +20,7 @@ export default defineConfig({
 					items: [
 						// Each item here is one entry in the navigation menu.
 						{ label: 'Getting started', slug: 'guide/getting-started' },
+						{ label: 'Ingress', slug: 'guide/ingress' },
 						{ label: 'Scheduler', slug: 'guide/scheduler' },
 						{ label: 'Deployment', slug: 'guide/deployment' },
 					],

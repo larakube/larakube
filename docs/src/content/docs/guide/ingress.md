@@ -40,7 +40,7 @@ Before you can use basic authentication, you need to create a Kubernetes secret 
 kubectl create secret generic my-application-basic-auth-secret --namespace=my-application-namespace --from-literal=username= --from-literal=password= --type=kubernetes.io/basic-auth
 ```
 
-After creating the empty secret, you can modify it to add the password with [kubectl-modify-secret](getting-started.md#kubectl-modify-secret):
+After creating the empty secret, you can modify it to add the password with [kubectl-modify-secret](../getting-started#kubectl-modify-secret):
 
 ```bash
 kubectl modify-secret my-application-basic-auth-secret -n my-application-namespace
