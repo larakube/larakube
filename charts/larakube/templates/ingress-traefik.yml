@@ -30,6 +30,36 @@ spec:
   tls:
     secretName: {{ include "larakube.fullname" . }}-cert-secret
 ---
+{{- if and .Values.web.traefik.basicAuth.enabled .Values.web.traefik.basicAuth.allowBypassForIpRanges -}}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "larakube.fullname" . }}-traefik-ingress-bypass-basic-auth
+  labels:
+    {{- include "larakube.labels" . | nindent 4 }}
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`{{ .Values.web.traefik.domain }}`) && ClientIP(`{{ join "`, `" .Values.web.traefik.basicAuth.allowBypassForIpRanges }}`)
+      kind: Rule
+      services:
+        - name: {{ include "larakube.fullname" . }}-web
+          port: {{ .Values.service.port }}
+      middlewares:
+        {{- if or .Values.web.traefik.customRequestHeaders .Values.web.traefik.customResponseHeaders }}
+        - name: {{ include "larakube.fullname" . }}-traefik-middleware-custom-headers
+        {{- end }}
+        {{- if .Values.web.traefik.compress }}
+        - name: {{ include "larakube.fullname" . }}-traefik-middleware-compress
+        {{- end }}
+        {{- range $key, $value := .Values.web.traefik.extraMiddlewares }}
+        - name: {{ $value }}
+        {{- end }}
+  tls:
+    secretName: {{ include "larakube.fullname" . }}-cert-secret
+---
+{{- end -}}
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:

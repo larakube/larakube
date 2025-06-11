@@ -16,3 +16,9 @@ You can update the repository with the following command:
 ```bash
 helm repo update larakube
 ```
+
+## Tools & Extensions
+
+### kubectl-modify-secret
+
+The guides in LaraKube use the [kubectl-modify-secret](https://github.com/rajatjindal/kubectl-modify-secret) extension for `kubectl` to modify secrets.

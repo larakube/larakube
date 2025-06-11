@@ -260,6 +260,8 @@ web:
       secret: ""
       # -- Basic auth realm (f.e. name of the site that you are restricting access to)
       realm: ""
+      # -- List of IP ranges that are allowed to bypass the basic auth.
+      allowBypassForIpRanges: []
 
     # @schema
     # type: array

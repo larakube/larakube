@@ -12,3 +12,5 @@ helm schema -k additionalProperties
 helm-docs
 ```
 
+This command creates a Markdown table in `charts/larakube`. Check and then copy the table to the main `readme.md` and to `docs/src/content/reference/chart-config.yml`.
+
