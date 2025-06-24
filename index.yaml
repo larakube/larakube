@@ -3,6 +3,23 @@ entries:
   larakube:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2025-06-24T13:38:51.017965536Z"
+    description: A Helm chart for Laravel applications
+    digest: 5b80deec3389cbbb33e21b573e34c310ee5d8cd22368c5a4cdb5395bc06b3288
+    home: https://www.larakube.com
+    icon: https://raw.githubusercontent.com/larakube/larakube/main/charts/larakube/icon.png
+    keywords:
+    - laravel
+    - php
+    name: larakube
+    sources:
+    - https://github.com/larakube/larakube/tree/main/charts/larakube
+    type: application
+    urls:
+    - https://github.com/larakube/larakube/releases/download/larakube-0.2.4/larakube-0.2.4.tgz
+    version: 0.2.4
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2025-06-11T13:17:37.319639884Z"
     description: A Helm chart for Laravel applications
     digest: b75f0d923b677753903f25138428f3788c5381d02f71f96b440c6ba0a4bdc5fb
@@ -72,4 +89,4 @@ entries:
     urls:
     - https://github.com/solidtime-io/larakube/releases/download/larakube-0.1.0/larakube-0.1.0.tgz
     version: 0.1.0
-generated: "2025-06-11T13:17:37.319664229Z"
+generated: "2025-06-24T13:38:51.017996113Z"
