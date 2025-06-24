@@ -72,6 +72,15 @@ spec:
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- if .Values.web.preStopCommand }}
+          lifecycle:
+            {{- with .Values.web.preStopCommand }}
+            preStop:
+              exec:
+                command:
+                  {{- toYaml . | nindent 16 }}
+            {{- end }}
+          {{- end }}
           {{- with .Values.web.startupProbe }}
           startupProbe:
             {{- toYaml . | nindent 12 }}
@@ -90,6 +99,7 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.web.terminationGracePeriodSeconds }}
       {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}

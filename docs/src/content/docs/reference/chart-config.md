@@ -65,13 +65,16 @@ This reference explains the config values of the Helm chart.
 | web.pdb | object | `{"enabled":false,"maxUnavailable":0}` | PodDisruptionBudget configuration for the web deployment. |
 | web.pdb.enabled | bool | `false` | Enable or disable the PodDisruptionBudget for the web deployment. |
 | web.pdb.maxUnavailable | int | `0` | The maximum number of pods that can be unavailable during a disruption. minAvailable: 1 |
+| web.preStopCommand | list | `[]` | Command that runs before the container is terminated. |
 | web.readinessProbe | object | `{}` | Readiness probe configuration for the web container. |
 | web.replicaCount | int | `1` | The number of replicas for the web deployment. |
 | web.resources | object | `{}` | Resource requests and limits for the web container. |
 | web.startupProbe | object | `{}` | Startup probe configuration for the web container. |
+| web.terminationGracePeriodSeconds | int | `30` | The termination grace period in seconds for the web deployment. |
 | web.tolerations | list | `[]` | Tolerations for the web deployment. |
 | web.topologySpreadConstraints | list | `[]` | Topology spread constraints for the web deployment. |
-| web.traefik.basicAuth | object | `{"enabled":false,"realm":"","secret":""}` | Configuration for basic authentication |
+| web.traefik.basicAuth | object | `{"allowBypassForIpRanges":[],"enabled":false,"realm":"","secret":""}` | Configuration for basic authentication |
+| web.traefik.basicAuth.allowBypassForIpRanges | list | `[]` | List of IP ranges that are allowed to bypass the basic auth. |
 | web.traefik.basicAuth.enabled | bool | `false` | Enable or disable basic authentication for Traefik. |
 | web.traefik.basicAuth.realm | string | `""` | Basic auth realm (f.e. name of the site that you are restricting access to) |
 | web.traefik.basicAuth.secret | string | `""` | Name of the secret that contains the user credentials. See https://doc.traefik.io/traefik/middlewares/http/basicauth/#users for more info |
@@ -95,7 +98,8 @@ This reference explains the config values of the Helm chart.
 | worker.default.env | object | `{}` | Environment variables specific to the worker container. |
 | worker.default.livenessProbe | object | `{}` | Liveness probe configuration for the worker container. |
 | worker.default.pdb.enabled | bool | `false` | Enable or disable the PodDisruptionBudget for the worker deployment. |
-| worker.default.pdb.maxUnavailable | int | `0` | The maximum number of pods that can be unavailable during a disruption. minAvailable: 1 |
+| worker.default.pdb.maxUnavailable | string | `nil` | The maximum number of pods that can be unavailable during a disruption. @schema anyOf:   - type: "null"   - type: string   - type: integer @schema |
+| worker.default.pdb.minAvailable | string | `nil` | The minimum number of pods that must be available during a disruption. @schema anyOf:   - type: "null"   - type: string   - type: integer @schema |
 | worker.default.readinessProbe | object | `{}` | Readiness probe configuration for the worker container. |
 | worker.default.replicaCount | int | `1` | The number of replicas for the worker deployment. |
 | worker.default.resources | object | `{}` | Resource requests and limits for the worker container. |

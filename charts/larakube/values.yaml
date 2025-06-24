@@ -207,8 +207,28 @@ web:
     enabled: false
 
     # -- The maximum number of pods that can be unavailable during a disruption.
-    #minAvailable: 1
-    maxUnavailable: 0
+    # @schema
+    # anyOf:
+    #   - type: "null"
+    #   - type: string
+    #   - type: integer
+    # @schema
+    maxUnavailable: null
+
+    # -- The minimum number of pods that must be available during a disruption.
+    # @schema
+    # anyOf:
+    #   - type: "null"
+    #   - type: string
+    #   - type: integer
+    # @schema
+    minAvailable: null
+
+  # -- The termination grace period in seconds for the web deployment.
+  terminationGracePeriodSeconds: 30
+
+  # -- Command that runs before the container is terminated.
+  preStopCommand: []
 
   # -- Tolerations for the web deployment.
   tolerations: []
@@ -338,8 +358,22 @@ worker:
       enabled: false
 
       # -- The maximum number of pods that can be unavailable during a disruption.
-      #minAvailable: 1
-      maxUnavailable: 0
+      # @schema
+      # anyOf:
+      #   - type: "null"
+      #   - type: string
+      #   - type: integer
+      # @schema
+      maxUnavailable: null
+
+      # -- The minimum number of pods that must be available during a disruption.
+      # @schema
+      # anyOf:
+      #   - type: "null"
+      #   - type: string
+      #   - type: integer
+      # @schema
+      minAvailable: null
 
 # Scheduler configuration.
 scheduler:

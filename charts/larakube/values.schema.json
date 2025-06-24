@@ -541,19 +541,60 @@
               "type": "boolean"
             },
             "maxUnavailable": {
-              "default": 0,
-              "description": "The maximum number of pods that can be unavailable during a disruption.\nminAvailable: 1",
+              "anyOf": [
+                {
+                  "required": [],
+                  "type": "null"
+                },
+                {
+                  "required": [],
+                  "type": "string"
+                },
+                {
+                  "required": [],
+                  "type": "integer"
+                }
+              ],
+              "default": "null",
+              "description": "The maximum number of pods that can be unavailable during a disruption.",
               "required": [],
-              "title": "maxUnavailable",
-              "type": "integer"
+              "title": "maxUnavailable"
+            },
+            "minAvailable": {
+              "anyOf": [
+                {
+                  "required": [],
+                  "type": "null"
+                },
+                {
+                  "required": [],
+                  "type": "string"
+                },
+                {
+                  "required": [],
+                  "type": "integer"
+                }
+              ],
+              "default": "null",
+              "description": "The minimum number of pods that must be available during a disruption.",
+              "required": [],
+              "title": "minAvailable"
             }
           },
           "required": [
-            "enabled",
-            "maxUnavailable"
+            "enabled"
           ],
           "title": "pdb",
           "type": "object"
+        },
+        "preStopCommand": {
+          "description": "Command that runs before the container is terminated.",
+          "items": {
+            "required": []
+          },
+          "required": [],
+          "title": "preStopCommand",
+          "type": "array"
         },
         "readinessProbe": {
           "description": "Readiness probe configuration for the web container.",
@@ -580,6 +621,13 @@
           "title": "startupProbe",
           "type": "object"
         },
+        "terminationGracePeriodSeconds": {
+          "default": 30,
+          "description": "The termination grace period in seconds for the web deployment.",
+          "required": [],
+          "title": "terminationGracePeriodSeconds",
+          "type": "integer"
+        },
         "tolerations": {
           "description": "Tolerations for the web deployment.",
           "items": {
@@ -604,6 +652,15 @@
             "basicAuth": {
               "description": "Configuration for basic authentication",
               "properties": {
+                "allowBypassForIpRanges": {
+                  "description": "List of IP ranges that are allowed to bypass the basic auth.",
+                  "items": {
+                    "required": []
+                  },
+                  "required": [],
+                  "title": "allowBypassForIpRanges",
+                  "type": "array"
+                },
                 "enabled": {
                   "default": false,
                   "description": "Enable or disable basic authentication for Traefik.",
@@ -629,7 +686,8 @@
               "required": [
                 "enabled",
                 "secret",
-                "realm"
+                "realm",
+                "allowBypassForIpRanges"
               ],
               "title": "basicAuth",
               "type": "object"
@@ -762,6 +820,8 @@
         "readinessProbe",
         "startupProbe",
         "pdb",
+        "terminationGracePeriodSeconds",
+        "preStopCommand",
         "tolerations",
         "affinity",
         "topologySpreadConstraints",
@@ -840,16 +900,48 @@
                   "type": "boolean"
                 },
                 "maxUnavailable": {
-                  "default": 0,
-                  "description": "The maximum number of pods that can be unavailable during a disruption.\nminAvailable: 1",
+                  "anyOf": [
+                    {
+                      "required": [],
+                      "type": "null"
+                    },
+                    {
+                      "required": [],
+                      "type": "string"
+                    },
+                    {
+                      "required": [],
+                      "type": "integer"
+                    }
+                  ],
+                  "default": "null",
+                  "description": "The maximum number of pods that can be unavailable during a disruption.",
                   "required": [],
-                  "title": "maxUnavailable",
-                  "type": "integer"
+                  "title": "maxUnavailable"
+                },
+                "minAvailable": {
+                  "anyOf": [
+                    {
+                      "required": [],
+                      "type": "null"
+                    },
+                    {
+                      "required": [],
+                      "type": "string"
+                    },
+                    {
+                      "required": [],
+                      "type": "integer"
+                    }
+                  ],
+                  "default": "null",
+                  "description": "The minimum number of pods that must be available during a disruption.",
+                  "required": [],
+                  "title": "minAvailable"
                 }
               },
               "required": [
-                "enabled",
-                "maxUnavailable"
+                "enabled"
               ],
               "title": "pdb",
               "type": "object"
