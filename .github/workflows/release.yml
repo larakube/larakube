@@ -2,6 +2,9 @@ name: Release Helm Chart
 
 on:
   push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   release:
@@ -31,3 +34,12 @@ jobs:
         uses: helm/chart-releaser-action@v1.6.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: "Run GitHub action workflow manually"
+        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        with:
+          owner: larakube
+          repo: larakube
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+          workflow_file_name: deploy-chart.yml
+          ref: gh-pages
