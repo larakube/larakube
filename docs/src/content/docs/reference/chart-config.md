@@ -22,8 +22,8 @@ This reference explains the config values of the Helm chart.
 | ingress.annotations | object | `{}` | Annotations to add to the ingress resource. |
 | ingress.className | string | `""` | The ingress class name. |
 | ingress.enabled | bool | `false` | Enable or disable the ingress resource. |
-| ingress.hosts | list | `[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | The hostname to use for the ingress. |
-| ingress.hosts[0].paths | list | `[{"path":"/","pathType":"ImplementationSpecific"}]` | The path to use for the ingress. |
+| ingress.hosts[0].host | string | `"chart-example.local"` |  |
+| ingress.hosts[0].paths[0].path | string | `"/"` |  |
 | ingress.hosts[0].paths[0].pathType | string | `"ImplementationSpecific"` | The type of path (e.g., ImplementationSpecific, Exact, Prefix). |
 | ingress.tls | list | `[]` | TLS configuration for the ingress. |
 | nameOverride | string | `""` | Overrides the name of the chart. |
@@ -51,20 +51,18 @@ This reference explains the config values of the Helm chart.
 | volumeMounts | list | `[]` | Additional volumeMounts on the output Deployment definition. |
 | volumes | list | `[]` | Additional volumes on the output Deployment definition. |
 | web.affinity | object | `{}` | Affinity rules for the web deployment. |
-| web.autoscaling | object | `{"enabled":false,"maxReplicas":100,"minReplicas":1,"targetCPUUtilizationPercentage":80}` | Autoscaling configuration for the web deployment. |
 | web.autoscaling.enabled | bool | `false` | Enable or disable autoscaling for the web deployment. |
 | web.autoscaling.maxReplicas | int | `100` | The maximum number of replicas for autoscaling. |
 | web.autoscaling.minReplicas | int | `1` | The minimum number of replicas for autoscaling. |
 | web.autoscaling.targetCPUUtilizationPercentage | int | `80` | The target CPU utilization percentage for autoscaling. |
-| web.certManager | object | `{"domains":[],"enabled":false,"issuer":""}` | Cert-Manager configuration for managing TLS certificates. |
 | web.certManager.domains | list | `[]` | The domains to use for Cert-Manager. |
 | web.certManager.enabled | bool | `false` | Enable or disable Cert-Manager. |
 | web.certManager.issuer | string | `""` | The issuer to use for Cert-Manager. |
 | web.env | object | `{}` | Environment variables specific to the web container. |
 | web.livenessProbe | object | `{}` | Liveness probe configuration for the web container. |
-| web.pdb | object | `{"enabled":false,"maxUnavailable":0}` | PodDisruptionBudget configuration for the web deployment. |
 | web.pdb.enabled | bool | `false` | Enable or disable the PodDisruptionBudget for the web deployment. |
-| web.pdb.maxUnavailable | int | `0` | The maximum number of pods that can be unavailable during a disruption. minAvailable: 1 |
+| web.pdb.maxUnavailable | string | `nil` | The maximum number of pods that can be unavailable during a disruption. |
+| web.pdb.minAvailable | string | `nil` | The minimum number of pods that must be available during a disruption. |
 | web.preStopCommand | list | `[]` | Command that runs before the container is terminated. |
 | web.readinessProbe | object | `{}` | Readiness probe configuration for the web container. |
 | web.replicaCount | int | `1` | The number of replicas for the web deployment. |
@@ -73,7 +71,6 @@ This reference explains the config values of the Helm chart.
 | web.terminationGracePeriodSeconds | int | `30` | The termination grace period in seconds for the web deployment. |
 | web.tolerations | list | `[]` | Tolerations for the web deployment. |
 | web.topologySpreadConstraints | list | `[]` | Topology spread constraints for the web deployment. |
-| web.traefik.basicAuth | object | `{"allowBypassForIpRanges":[],"enabled":false,"realm":"","secret":""}` | Configuration for basic authentication |
 | web.traefik.basicAuth.allowBypassForIpRanges | list | `[]` | List of IP ranges that are allowed to bypass the basic auth. |
 | web.traefik.basicAuth.enabled | bool | `false` | Enable or disable basic authentication for Traefik. |
 | web.traefik.basicAuth.realm | string | `""` | Basic auth realm (f.e. name of the site that you are restricting access to) |
@@ -85,12 +82,9 @@ This reference explains the config values of the Helm chart.
 | web.traefik.domainRedirects | list | `[]` | Domains that redirect to the main domain (f.e. redirect www to non-www) Please keep in mind that the certificate need include this domain as well. Example:  - domain: www.some-site.test |
 | web.traefik.enabled | bool | `false` | Enable or disable Traefik ingress. |
 | web.traefik.extraMiddlewares | list | `[]` | Extra middlewares to use for Traefik. |
-| web.updateStrategy | object | `{"rollingUpdate":{"maxSurge":1,"maxUnavailable":0},"type":"RollingUpdate"}` | Update strategy for the web deployment. |
-| web.updateStrategy.rollingUpdate | object | `{"maxSurge":1,"maxUnavailable":0}` | Rolling update configuration. |
 | web.updateStrategy.rollingUpdate.maxSurge | int | `1` | The maximum number of pods that can be created above the desired number of pods during an update. |
 | web.updateStrategy.rollingUpdate.maxUnavailable | int | `0` | The maximum number of pods that can be unavailable during an update. |
 | web.updateStrategy.type | string | `"RollingUpdate"` | The update strategy for the web deployment (e.g., RollingUpdate, Recreate). |
-| worker.default.autoscaling | object | `{"enabled":false,"maxReplicas":100,"minReplicas":1,"targetCPUUtilizationPercentage":80}` | Autoscaling configuration for the worker deployment. |
 | worker.default.autoscaling.enabled | bool | `false` | Enable or disable autoscaling for the worker deployment. |
 | worker.default.autoscaling.maxReplicas | int | `100` | The maximum number of replicas for autoscaling. |
 | worker.default.autoscaling.minReplicas | int | `1` | The minimum number of replicas for autoscaling. |
@@ -98,8 +92,8 @@ This reference explains the config values of the Helm chart.
 | worker.default.env | object | `{}` | Environment variables specific to the worker container. |
 | worker.default.livenessProbe | object | `{}` | Liveness probe configuration for the worker container. |
 | worker.default.pdb.enabled | bool | `false` | Enable or disable the PodDisruptionBudget for the worker deployment. |
-| worker.default.pdb.maxUnavailable | string | `nil` | The maximum number of pods that can be unavailable during a disruption. @schema anyOf:   - type: "null"   - type: string   - type: integer @schema |
-| worker.default.pdb.minAvailable | string | `nil` | The minimum number of pods that must be available during a disruption. @schema anyOf:   - type: "null"   - type: string   - type: integer @schema |
+| worker.default.pdb.maxUnavailable | string | `nil` | The maximum number of pods that can be unavailable during a disruption. |
+| worker.default.pdb.minAvailable | string | `nil` | The minimum number of pods that must be available during a disruption. |
 | worker.default.readinessProbe | object | `{}` | Readiness probe configuration for the worker container. |
 | worker.default.replicaCount | int | `1` | The number of replicas for the worker deployment. |
 | worker.default.resources | object | `{}` | Resource requests and limits for the worker container. |

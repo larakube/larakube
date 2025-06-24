@@ -81,11 +81,11 @@ ingress:
     # kubernetes.io/ingress.class: nginx
   # kubernetes.io/tls-acme: "true"
 
-  # -- The hostname to use for the ingress.
+  # The hostname to use for the ingress.
   hosts:
     - host: chart-example.local
 
-      # -- The path to use for the ingress.
+      # The path to use for the ingress.
       paths:
         - path: /
 
@@ -141,7 +141,7 @@ web:
   # -- The number of replicas for the web deployment.
   replicaCount: 1
 
-  # -- Autoscaling configuration for the web deployment.
+  # Autoscaling configuration for the web deployment.
   autoscaling:
 
     # -- Enable or disable autoscaling for the web deployment.
@@ -170,13 +170,13 @@ web:
     #   cpu: 100m
   #   memory: 128Mi
 
-  # -- Update strategy for the web deployment.
+  # Update strategy for the web deployment.
   updateStrategy:
 
     # -- The update strategy for the web deployment (e.g., RollingUpdate, Recreate).
     type: RollingUpdate
 
-    # -- Rolling update configuration.
+    # Rolling update configuration.
     rollingUpdate:
 
       # @schema
@@ -200,28 +200,28 @@ web:
   # -- Startup probe configuration for the web container.
   startupProbe: {}
 
-  # -- PodDisruptionBudget configuration for the web deployment.
+  # PodDisruptionBudget configuration for the web deployment.
   pdb:
 
     # -- Enable or disable the PodDisruptionBudget for the web deployment.
     enabled: false
 
-    # -- The maximum number of pods that can be unavailable during a disruption.
     # @schema
     # anyOf:
     #   - type: "null"
     #   - type: string
     #   - type: integer
     # @schema
+    # -- The maximum number of pods that can be unavailable during a disruption.
     maxUnavailable: null
 
-    # -- The minimum number of pods that must be available during a disruption.
     # @schema
     # anyOf:
     #   - type: "null"
     #   - type: string
     #   - type: integer
     # @schema
+    # -- The minimum number of pods that must be available during a disruption.
     minAvailable: null
 
   # -- The termination grace period in seconds for the web deployment.
@@ -239,7 +239,7 @@ web:
   # -- Topology spread constraints for the web deployment.
   topologySpreadConstraints: []
 
-  # -- Cert-Manager configuration for managing TLS certificates.
+  # Cert-Manager configuration for managing TLS certificates.
   certManager:
 
     # -- Enable or disable Cert-Manager.
@@ -272,7 +272,7 @@ web:
     # -- Custom response headers to use for Traefik.
     customResponseHeaders: {}
 
-    # -- Configuration for basic authentication
+    # Configuration for basic authentication
     basicAuth:
       # -- Enable or disable basic authentication for Traefik.
       enabled: false
@@ -304,7 +304,7 @@ worker:
     # -- The number of replicas for the worker deployment.
     replicaCount: 1
 
-    # -- Autoscaling configuration for the worker deployment.
+    # Autoscaling configuration for the worker deployment.
     autoscaling:
 
       # -- Enable or disable autoscaling for the worker deployment.
@@ -357,22 +357,22 @@ worker:
       # -- Enable or disable the PodDisruptionBudget for the worker deployment.
       enabled: false
 
-      # -- The maximum number of pods that can be unavailable during a disruption.
       # @schema
       # anyOf:
       #   - type: "null"
       #   - type: string
       #   - type: integer
       # @schema
+      # -- The maximum number of pods that can be unavailable during a disruption.
       maxUnavailable: null
 
-      # -- The minimum number of pods that must be available during a disruption.
       # @schema
       # anyOf:
       #   - type: "null"
       #   - type: string
       #   - type: integer
       # @schema
+      # -- The minimum number of pods that must be available during a disruption.
       minAvailable: null
 
 # Scheduler configuration.
