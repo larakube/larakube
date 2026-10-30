@@ -9,9 +9,9 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'LaraKube',
-			social: {
-				github: 'https://github.com/larakube/larakube',
-			},
+			social: [
+				{ icon: 'github', label: 'GitHub', href: 'https://github.com/larakube/larakube' },
+			],
 			lastUpdated: true,
 			editLink: {
 				baseUrl: 'https://github.com/larakube/larakube/edit/main/docs/',
@@ -39,7 +39,7 @@ export default defineConfig({
 				},
 				{
 					label: 'Reference',
-					autogenerate: { directory: 'reference' },
+					items: [{ autogenerate: { directory: 'reference' } }],
 				},
 			],
 		}),
