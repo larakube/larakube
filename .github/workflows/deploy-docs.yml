@@ -5,6 +5,9 @@ on:
   workflow_dispatch:
 
 name: Deploy Docs
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,9 +32,11 @@ jobs:
           compression-level: 9
           if-no-files-found: error
 
+      # Runs the image behind fastfront-io/deploy-action@v0.0.1 directly, pinned by digest,
+      # because the action references the CLI image by a mutable tag.
       - name: "Deploy with FastFront"
-        uses: fastfront-io/deploy-action@v0.0.1
+        uses: docker://ghcr.io/fastfront-io/cli@sha256:0f92190924d681d669c60dd1a187cb5ceef82a1f050516ae376c24ecf6d425c7
         with:
-          folder: './docs/dist'
-          environment: ${{ vars.FASTFRONT_DOCS_STAGE }}
-          api_key: ${{ secrets.FASTFRONT_DOCS_STAGE_KEY }}
+          args: deploy ./docs/dist ${{ vars.FASTFRONT_DOCS_STAGE }} --timeout=10m
+        env:
+          FASTFRONT_API_KEY: ${{ secrets.FASTFRONT_DOCS_STAGE_KEY }}

@@ -5,6 +5,9 @@ on:
   workflow_dispatch:
 
 name: Deploy
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -12,9 +15,11 @@ jobs:
       - name: "Check out code"
         uses: actions/checkout@v4
 
+      # Runs the image behind fastfront-io/deploy-action@v0.0.1 directly, pinned by digest,
+      # because the action references the CLI image by a mutable tag.
       - name: "Deploy with FastFront"
-        uses: fastfront-io/deploy-action@v0.0.1
+        uses: docker://ghcr.io/fastfront-io/cli@sha256:0f92190924d681d669c60dd1a187cb5ceef82a1f050516ae376c24ecf6d425c7
         with:
-          folder: './build'
-          environment: ${{ vars.FASTFRONT_CHART_STAGE }}
-          api_key: ${{ secrets.FASTFRONT_CHART_STAGE_KEY }}
+          args: deploy ./build ${{ vars.FASTFRONT_CHART_STAGE }} --timeout=10m
+        env:
+          FASTFRONT_API_KEY: ${{ secrets.FASTFRONT_CHART_STAGE_KEY }}
