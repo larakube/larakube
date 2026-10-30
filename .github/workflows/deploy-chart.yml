@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Check out code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: "Create deployment folder"
         run: mkdir -p ./build && cp index.yaml ./build && cp index.html ./build && cp artifacthub-repo.yml ./build
