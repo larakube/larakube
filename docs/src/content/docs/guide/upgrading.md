@@ -121,6 +121,8 @@ the pods fail to start.
 - The chart fails with an error message if a worker enables `autoscaling` without `maxReplicas`, or a
   `web.traefik.domainRedirects` entry uses a wildcard domain. These setups did not work before either.
   `worker.<name>.autoscaling.minReplicas` now defaults to `1`.
+- If `web.traefik` is enabled without `web.certManager` or `web.traefik.tlsSecretName`, the install notes warn that
+  the TLS secret is missing.
 - New, optional settings: `web.traefik.tlsSecretName`, `web.certManager.issuerKind`,
   `worker.<name>.command` / `args` ([queue workers](/guide/deployment/#queue-workers)) and
   [`postDeployment`](/guide/deployment/#run-commands-after-a-deployment).

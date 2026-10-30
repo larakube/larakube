@@ -20,3 +20,9 @@
   echo "Visit http://127.0.0.1:8080 to use your application"
   kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
 {{- end }}
+{{- if and .Values.web.traefik.enabled (not .Values.web.certManager.enabled) (not .Values.web.traefik.tlsSecretName) }}
+
+WARNING: web.traefik is enabled, but neither web.certManager nor web.traefik.tlsSecretName is set.
+         The IngressRoutes use the TLS secret {{ include "larakube.traefikTlsSecretName" . }}, which this chart does not create.
+         Create it yourself or Traefik serves its default certificate.
+{{- end }}
