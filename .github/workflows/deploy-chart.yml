@@ -4,7 +4,7 @@ on:
       - gh-pages
   workflow_dispatch:
 
-name: Deploy
+name: Deploy Chart
 permissions:
   contents: read
 
@@ -14,6 +14,9 @@ jobs:
     steps:
       - name: "Check out code"
         uses: actions/checkout@v4
+
+      - name: "Create deployment folder"
+        run: mkdir -p ./build && cp index.yaml ./build && cp index.html ./build && cp artifacthub-repo.yml ./build
 
       # Runs the image behind fastfront-io/deploy-action@v0.0.1 directly, pinned by digest,
       # because the action references the CLI image by a mutable tag.
