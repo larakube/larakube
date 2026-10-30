@@ -1,0 +1,4 @@
+# Rendered and linted in CI. Smallest realistic install.
+image:
+  repository: ghcr.io/example/laravel-app
+  tag: "1.0.0"

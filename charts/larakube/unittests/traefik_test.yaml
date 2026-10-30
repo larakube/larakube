@@ -1,0 +1,154 @@
+suite: Traefik and cert-manager
+release:
+  name: t
+set:
+  image.repository: ghcr.io/example/app
+  web.traefik.enabled: true
+  web.traefik.domain: app.example.com
+templates:
+  - templates/ingress-traefik.yml
+  - templates/middleware-traefik.yml
+  - templates/cert-manager-cert.yml
+tests:
+  - it: uses the Traefik v3 CRDs by default
+    asserts:
+      - isAPIVersion:
+          of: traefik.io/v1alpha1
+        template: templates/ingress-traefik.yml
+      - isAPIVersion:
+          of: traefik.io/v1alpha1
+        template: templates/middleware-traefik.yml
+
+  - it: uses the Traefik v2 CRDs with version 2
+    set:
+      web.traefik.version: 2
+    asserts:
+      - isAPIVersion:
+          of: traefik.containo.us/v1alpha1
+        template: templates/ingress-traefik.yml
+      - isAPIVersion:
+          of: traefik.containo.us/v1alpha1
+        template: templates/middleware-traefik.yml
+
+  - it: uses the cert-manager secret for TLS by default
+    template: templates/ingress-traefik.yml
+    documentSelector:
+      path: metadata.name
+      value: t-larakube-traefik-ingress
+    asserts:
+      - equal:
+          path: spec.tls.secretName
+          value: t-larakube-cert-secret
+
+  - it: uses a custom TLS secret
+    template: templates/ingress-traefik.yml
+    documentSelector:
+      path: metadata.name
+      value: t-larakube-traefik-ingress
+    set:
+      web.traefik.tlsSecretName: wildcard-tls
+    asserts:
+      - equal:
+          path: spec.tls.secretName
+          value: wildcard-tls
+
+  - it: builds one ClientIP matcher per bypass range
+    template: templates/ingress-traefik.yml
+    documentSelector:
+      path: metadata.name
+      value: t-larakube-traefik-ingress-bypass-basic-auth
+    set:
+      web.traefik.basicAuth:
+        enabled: true
+        secret: basic-auth
+        allowBypassForIpRanges:
+          - 10.0.0.0/8
+          - 192.168.1.10
+    asserts:
+      - equal:
+          path: spec.routes[0].match
+          value: Host(`app.example.com`) && (ClientIP(`10.0.0.0/8`) || ClientIP(`192.168.1.10`))
+      - notContains:
+          path: spec.routes[0].middlewares
+          content:
+            name: t-larakube-traefik-middleware-basic-auth
+
+  - it: renders every Traefik resource as its own document
+    template: templates/ingress-traefik.yml
+    set:
+      web.traefik.basicAuth:
+        enabled: true
+        secret: basic-auth
+        allowBypassForIpRanges: [10.0.0.0/8]
+      web.traefik.domainRedirects:
+        - domain: www.app.example.com
+    asserts:
+      - hasDocuments:
+          count: 5
+
+  - it: requires a secret for basic auth
+    template: templates/middleware-traefik.yml
+    set:
+      web.traefik.basicAuth.enabled: true
+    asserts:
+      - failedTemplate:
+          errorPattern: "web.traefik.basicAuth.secret is required"
+
+  - it: escapes dots in domain redirect regexes
+    template: templates/middleware-traefik.yml
+    documentSelector:
+      path: metadata.name
+      value: t-larakube-traefik-middleware-domain-redirect-www-app-example-com
+    set:
+      web.traefik.domainRedirects:
+        - domain: www.app.example.com
+    asserts:
+      - equal:
+          path: spec.redirectRegex.regex
+          value: ^https?://www\.app\.example\.com/(.*)
+      - equal:
+          path: spec.redirectRegex.replacement
+          value: https://app.example.com/${1}
+
+  - it: only creates the compress middleware when enabled
+    template: templates/middleware-traefik.yml
+    set:
+      web.traefik.compress: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: t-larakube-traefik-middleware-permanent-redirect-https
+
+  - it: supports a namespaced cert-manager Issuer
+    template: templates/cert-manager-cert.yml
+    set:
+      web.certManager:
+        enabled: true
+        issuer: letsencrypt
+        issuerKind: Issuer
+        domains: [app.example.com]
+    asserts:
+      - equal:
+          path: spec.issuerRef
+          value:
+            name: letsencrypt
+            kind: Issuer
+
+  - it: requires a cert-manager issuer
+    template: templates/cert-manager-cert.yml
+    set:
+      web.certManager.enabled: true
+    asserts:
+      - failedTemplate:
+          errorPattern: "web.certManager.issuer is required"
+
+  - it: fails on a wildcard redirect domain
+    set:
+      web.traefik.domainRedirects:
+        - domain: "*.app.example.com"
+    asserts:
+      - failedTemplate:
+          errorPattern: "wildcard domain"
+        template: templates/middleware-traefik.yml

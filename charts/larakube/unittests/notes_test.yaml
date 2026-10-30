@@ -1,0 +1,26 @@
+suite: NOTES
+release:
+  name: t
+set:
+  image.repository: ghcr.io/example/app
+templates:
+  - templates/NOTES.txt
+tests:
+  - it: warns when Traefik has no TLS secret source
+    set:
+      web.traefik.enabled: true
+      web.traefik.domain: app.example.com
+    asserts:
+      - matchRegexRaw:
+          pattern: "TLS secret t-larakube-cert-secret, which this chart does not create"
+
+  - it: does not warn when cert-manager creates the secret
+    set:
+      web.traefik.enabled: true
+      web.traefik.domain: app.example.com
+      web.certManager.enabled: true
+      web.certManager.issuer: letsencrypt
+      web.certManager.domains: [app.example.com]
+    asserts:
+      - notMatchRegexRaw:
+          pattern: "WARNING"

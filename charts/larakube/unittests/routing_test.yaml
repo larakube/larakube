@@ -1,0 +1,27 @@
+suite: ingress and helm test
+release:
+  name: t
+set:
+  image.repository: ghcr.io/example/app
+templates:
+  - templates/ingress.yaml
+  - templates/tests/test-connection.yaml
+tests:
+  - it: routes the standard Ingress to the web Service
+    template: templates/ingress.yaml
+    set:
+      ingress.enabled: true
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: t-larakube-web
+
+  - it: tests the web Service with a pinned image
+    template: templates/tests/test-connection.yaml
+    asserts:
+      - equal:
+          path: spec.containers[0].args[0]
+          value: t-larakube-web:80
+      - matchRegex:
+          path: spec.containers[0].image
+          pattern: ^busybox:[0-9.]+$

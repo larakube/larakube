@@ -129,8 +129,27 @@ revisionHistoryLimit: 2
 # -- Environment variables to set in the container.
 env: {}
 
-# -- Secret environment variables to set in the container.
+# @schema
+# type: array
+# items:
+#   type: object
+#   required: [name, secretName, secretKey]
+#   properties:
+#     name:
+#       type: string
+#     secretName:
+#       type: string
+#     secretKey:
+#       type: string
+#     existing:
+#       type: boolean
+# @schema
+# -- Environment variables read from existing Kubernetes Secrets, set in every container.
+# Each entry needs `name` (the variable), `secretName` and `secretKey`.
 secretEnvs: []
+# - name: APP_KEY
+#   secretName: my-app-env
+#   secretKey: APP_KEY
 
 # Web deployment configuration.
 web:
@@ -233,7 +252,7 @@ web:
   # -- Tolerations for the web deployment.
   tolerations: []
 
-  # -- Affinity rules for the web deployment.
+  # -- Affinity rules for the web deployment. Overrides the global `affinity`.
   affinity: {}
 
   # -- Topology spread constraints for the web deployment.
@@ -248,6 +267,12 @@ web:
     # -- The issuer to use for Cert-Manager.
     issuer: ""
 
+    # @schema
+    # enum: [ClusterIssuer, Issuer]
+    # @schema
+    # -- The kind of the issuer (`ClusterIssuer` or a namespaced `Issuer`).
+    issuerKind: ClusterIssuer
+
     # -- The domains to use for Cert-Manager.
     domains: []
 
@@ -256,6 +281,17 @@ web:
 
     # -- Enable or disable Traefik ingress.
     enabled: false
+
+    # @schema
+    # type: integer
+    # minimum: 2
+    # maximum: 3
+    # @schema
+    # -- Major version of Traefik in the cluster. `3` uses the `traefik.io/v1alpha1` CRDs, `2` uses `traefik.containo.us/v1alpha1`.
+    version: 3
+
+    # -- Name of the TLS secret used by the IngressRoutes. Defaults to the secret created by `web.certManager`.
+    tlsSecretName: ""
 
     # -- Enable or disable compression for Traefik.
     compress: true
@@ -319,6 +355,13 @@ worker:
       # -- The target CPU utilization percentage for autoscaling.
       targetCPUUtilizationPercentage: 80
       # targetMemoryUtilizationPercentage: 80
+
+    # -- Command of the worker container. Empty uses the image's entrypoint.
+    # Example: ["php", "artisan", "queue:work", "--tries=3"]
+    command: []
+
+    # -- Arguments of the worker container. Empty uses the image's default arguments.
+    args: []
 
     # -- Environment variables specific to the worker container.
     env: { }
@@ -419,4 +462,26 @@ databaseMigration:
   env: { }
 
   # -- Resource requests and limits for the database migration container.
+  resources: { }
+
+# Post-deployment job configuration. Runs once after every install and upgrade, after the database migration.
+postDeployment:
+
+  # -- Enable or disable the post-deployment job.
+  enabled: false
+
+  # -- The command to run after a deployment. The job runs in its own pod, so only use commands that change shared
+  # state (cache store, database, queue). File caches like `config:cache` would not reach the web or worker pods.
+  command:
+    - /bin/sh
+    - -c
+    - php artisan cache:clear
+
+  # -- The number of times to retry the post-deployment job.
+  retry: 0
+
+  # -- Environment variables specific to the post-deployment container.
+  env: { }
+
+  # -- Resource requests and limits for the post-deployment container.
   resources: { }

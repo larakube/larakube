@@ -1,0 +1,63 @@
+suite: PodDisruptionBudgets
+release:
+  name: t
+set:
+  image.repository: ghcr.io/example/app
+templates:
+  - templates/pdb-web.yaml
+  - templates/pdb-worker.yaml
+tests:
+  - it: is not rendered by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: keeps maxUnavailable 0
+    template: templates/pdb-web.yaml
+    set:
+      web.pdb:
+        enabled: true
+        maxUnavailable: 0
+    asserts:
+      - equal:
+          path: spec.maxUnavailable
+          value: 0
+      - notExists:
+          path: spec.minAvailable
+      - equal:
+          path: spec.selector.matchLabels["app.kubernetes.io/component"]
+          value: web
+
+  - it: renders minAvailable for a worker
+    template: templates/pdb-worker.yaml
+    set:
+      worker.default.pdb:
+        enabled: true
+        minAvailable: 1
+    asserts:
+      - equal:
+          path: spec.minAvailable
+          value: 1
+      - equal:
+          path: spec.selector.matchLabels["app.kubernetes.io/component"]
+          value: worker-default
+
+  - it: fails when both fields are set
+    template: templates/pdb-web.yaml
+    set:
+      web.pdb:
+        enabled: true
+        minAvailable: 1
+        maxUnavailable: 1
+    asserts:
+      - failedTemplate:
+          errorPattern: "set either minAvailable or maxUnavailable, not both"
+
+  - it: fails when neither field is set
+    template: templates/pdb-worker.yaml
+    set:
+      worker.default.pdb:
+        enabled: true
+    asserts:
+      - failedTemplate:
+          errorPattern: "worker.default.pdb.enabled is true: set minAvailable or maxUnavailable"

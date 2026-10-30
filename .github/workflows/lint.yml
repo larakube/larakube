@@ -1,6 +1,11 @@
 name: Lint Helm Chart
 
-on: [push]
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   lint:
@@ -12,9 +17,20 @@ jobs:
 
       - name: "Install Helm"
         uses: azure/setup-helm@v4
+        with:
+          version: v4.3.0
 
       - name: "Lint helm chart"
         run: helm lint charts/larakube --values charts/larakube/values.yaml
+
+      - name: "Lint and render CI values files"
+        run: |
+          for values in charts/larakube/ci/*-values.yaml; do
+            echo "::group::$values"
+            helm lint charts/larakube --strict --values "$values"
+            helm template ci charts/larakube --values "$values" > /dev/null
+            echo "::endgroup::"
+          done
 
       - name: "Build helm chart"
         run: helm template charts/larakube --values charts/larakube/values.yaml --output-dir build --debug
@@ -26,3 +42,69 @@ jobs:
           path: build
           compression-level: 9
           if-no-files-found: error
+
+  unittest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      # helm-unittest image (Helm 4.3.0, helm-unittest 1.2.1), pinned by digest.
+      # The container user differs from the runner user and must be able to create unittests/__snapshot__.
+      - name: "Run helm-unittest"
+        run: |
+          chmod a+w charts/larakube/unittests
+          docker run --rm -v "$PWD/charts/larakube:/apps" \
+            helmunittest/helm-unittest:4.3.0-1.2.1@sha256:28ea86c3e0b07f501f0c2e9c08b9f41e240f4a4b571cb5106b36cf0f0607e989 \
+            -f 'unittests/*_test.yaml' .
+
+  kubeconform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Install Helm"
+        uses: azure/setup-helm@v4
+        with:
+          version: v4.3.0
+
+      - name: "Install kubeconform"
+        env:
+          KUBECONFORM_VERSION: v0.8.0
+          KUBECONFORM_SHA256: 9bc2bffbf71f261128533edaf912153948b7ff238f9a531ae6d34466ec287883
+        run: |
+          mkdir -p "$HOME/.local/bin" && echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          curl -sSfL -o kubeconform.tar.gz "https://github.com/yannh/kubeconform/releases/download/${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz"
+          echo "${KUBECONFORM_SHA256}  kubeconform.tar.gz" | sha256sum --check
+          tar -xzf kubeconform.tar.gz -C "$HOME/.local/bin" kubeconform
+
+      - name: "Validate rendered manifests"
+        run: ./scripts/kubeconform.sh
+
+  generated-files:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Install helm-schema and helm-docs"
+        env:
+          HELM_SCHEMA_VERSION: 0.18.1
+          HELM_SCHEMA_SHA256: 243795d00558d1b8867b0acef126bfdaea1c8b03da807dcb2aca73fbe1c79916
+          HELM_DOCS_VERSION: 1.14.2
+          HELM_DOCS_SHA256: a8cf72ada34fad93285ba2a452b38bdc5bd52cc9a571236244ec31022928d6cc
+        run: |
+          mkdir -p "$HOME/.local/bin" && echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          curl -sSfL -o helm-schema.tar.gz "https://github.com/dadav/helm-schema/releases/download/${HELM_SCHEMA_VERSION}/helm-schema_${HELM_SCHEMA_VERSION}_Linux_x86_64.tar.gz"
+          echo "${HELM_SCHEMA_SHA256}  helm-schema.tar.gz" | sha256sum --check
+          tar -xzf helm-schema.tar.gz -C "$HOME/.local/bin" helm-schema
+          curl -sSfL -o helm-docs.tar.gz "https://github.com/norwoodj/helm-docs/releases/download/v${HELM_DOCS_VERSION}/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.tar.gz"
+          echo "${HELM_DOCS_SHA256}  helm-docs.tar.gz" | sha256sum --check
+          tar -xzf helm-docs.tar.gz -C "$HOME/.local/bin" helm-docs
+
+      - name: "Check values.schema.json and values tables are up to date"
+        run: ./scripts/check-generated.sh

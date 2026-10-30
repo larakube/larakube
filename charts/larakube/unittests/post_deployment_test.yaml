@@ -1,0 +1,59 @@
+suite: post-deployment job
+release:
+  name: t
+set:
+  image.repository: ghcr.io/example/app
+templates:
+  - templates/job-post-deployment.yaml
+  - templates/job-db-migrate.yaml
+tests:
+  - it: is not rendered by default
+    template: templates/job-post-deployment.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: runs cache:clear after the migration job
+    set:
+      postDeployment.enabled: true
+      databaseMigration.enabled: true
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].command
+          value: ["/bin/sh", "-c", "php artisan cache:clear"]
+        template: templates/job-post-deployment.yaml
+      - equal:
+          path: metadata.annotations["helm.sh/hook"]
+          value: post-install,post-upgrade
+        template: templates/job-post-deployment.yaml
+      - equal:
+          path: metadata.annotations["helm.sh/hook-weight"]
+          value: "10"
+        template: templates/job-post-deployment.yaml
+      - notExists:
+          path: metadata.annotations["helm.sh/hook-weight"]
+        template: templates/job-db-migrate.yaml
+
+  - it: runs a custom command
+    template: templates/job-post-deployment.yaml
+    set:
+      postDeployment:
+        enabled: true
+        retry: 2
+        command: ["php", "artisan", "queue:restart"]
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].command
+          value: ["php", "artisan", "queue:restart"]
+      - equal:
+          path: spec.backoffLimit
+          value: 2
+
+  - it: requires a command
+    template: templates/job-post-deployment.yaml
+    set:
+      postDeployment.enabled: true
+      postDeployment.command: []
+    asserts:
+      - failedTemplate:
+          errorPattern: "postDeployment.command is required"

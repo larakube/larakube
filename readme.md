@@ -40,8 +40,8 @@
 | ingress.annotations | object | `{}` | Annotations to add to the ingress resource. |
 | ingress.className | string | `""` | The ingress class name. |
 | ingress.enabled | bool | `false` | Enable or disable the ingress resource. |
-| ingress.hosts | list | `[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | The hostname to use for the ingress. |
-| ingress.hosts[0].paths | list | `[{"path":"/","pathType":"ImplementationSpecific"}]` | The path to use for the ingress. |
+| ingress.hosts[0].host | string | `"chart-example.local"` |  |
+| ingress.hosts[0].paths[0].path | string | `"/"` |  |
 | ingress.hosts[0].paths[0].pathType | string | `"ImplementationSpecific"` | The type of path (e.g., ImplementationSpecific, Exact, Prefix). |
 | ingress.tls | list | `[]` | TLS configuration for the ingress. |
 | nameOverride | string | `""` | Overrides the name of the chart. |
@@ -49,13 +49,18 @@
 | podAnnotations | object | `{}` | Annotations to add to the pod. |
 | podLabels | object | `{}` | Labels to add to the pod. |
 | podSecurityContext | object | `{}` | Security context for the pod. |
+| postDeployment.command | list | `["/bin/sh","-c","php artisan cache:clear"]` | The command to run after a deployment. The job runs in its own pod, so only use commands that change shared state (cache store, database, queue). File caches like `config:cache` would not reach the web or worker pods. |
+| postDeployment.enabled | bool | `false` | Enable or disable the post-deployment job. |
+| postDeployment.env | object | `{}` | Environment variables specific to the post-deployment container. |
+| postDeployment.resources | object | `{}` | Resource requests and limits for the post-deployment container. |
+| postDeployment.retry | int | `0` | The number of times to retry the post-deployment job. |
 | revisionHistoryLimit | int | `2` | The number of old ReplicaSets to retain. |
 | scheduler.command | list | `["/bin/sh","-c","php artisan schedule:run"]` | The command to run the scheduler. |
 | scheduler.enabled | bool | `true` | Enable or disable the scheduler. |
 | scheduler.env | object | `{}` | Environment variables specific to the scheduler container. |
 | scheduler.resources | object | `{}` | Resource requests and limits for the scheduler container. |
 | scheduler.schedule | string | `"* * * * *"` | The schedule for the scheduler (e.g., every minute). |
-| secretEnvs | list | `[]` | Secret environment variables to set in the container. |
+| secretEnvs | list | `[]` | Environment variables read from existing Kubernetes Secrets, set in every container. Each entry needs `name` (the variable), `secretName` and `secretKey`. |
 | securityContext | object | `{}` | Security context for the container. |
 | service.containerPort | int | `8000` | The port on which the container will listen. |
 | service.port | int | `80` | The port on which the service will be exposed. |
@@ -68,28 +73,29 @@
 | topologySpreadConstraints | list | `[]` | Topology spread constraints for scheduling the pod. |
 | volumeMounts | list | `[]` | Additional volumeMounts on the output Deployment definition. |
 | volumes | list | `[]` | Additional volumes on the output Deployment definition. |
-| web.affinity | object | `{}` | Affinity rules for the web deployment. |
-| web.autoscaling | object | `{"enabled":false,"maxReplicas":100,"minReplicas":1,"targetCPUUtilizationPercentage":80}` | Autoscaling configuration for the web deployment. |
+| web.affinity | object | `{}` | Affinity rules for the web deployment. Overrides the global `affinity`. |
 | web.autoscaling.enabled | bool | `false` | Enable or disable autoscaling for the web deployment. |
 | web.autoscaling.maxReplicas | int | `100` | The maximum number of replicas for autoscaling. |
 | web.autoscaling.minReplicas | int | `1` | The minimum number of replicas for autoscaling. |
 | web.autoscaling.targetCPUUtilizationPercentage | int | `80` | The target CPU utilization percentage for autoscaling. |
-| web.certManager | object | `{"domains":[],"enabled":false,"issuer":""}` | Cert-Manager configuration for managing TLS certificates. |
 | web.certManager.domains | list | `[]` | The domains to use for Cert-Manager. |
 | web.certManager.enabled | bool | `false` | Enable or disable Cert-Manager. |
 | web.certManager.issuer | string | `""` | The issuer to use for Cert-Manager. |
+| web.certManager.issuerKind | string | `"ClusterIssuer"` | The kind of the issuer (`ClusterIssuer` or a namespaced `Issuer`). |
 | web.env | object | `{}` | Environment variables specific to the web container. |
 | web.livenessProbe | object | `{}` | Liveness probe configuration for the web container. |
-| web.pdb | object | `{"enabled":false,"maxUnavailable":0}` | PodDisruptionBudget configuration for the web deployment. |
 | web.pdb.enabled | bool | `false` | Enable or disable the PodDisruptionBudget for the web deployment. |
-| web.pdb.maxUnavailable | int | `0` | The maximum number of pods that can be unavailable during a disruption. minAvailable: 1 |
+| web.pdb.maxUnavailable | string | `nil` | The maximum number of pods that can be unavailable during a disruption. |
+| web.pdb.minAvailable | string | `nil` | The minimum number of pods that must be available during a disruption. |
+| web.preStopCommand | list | `[]` | Command that runs before the container is terminated. |
 | web.readinessProbe | object | `{}` | Readiness probe configuration for the web container. |
 | web.replicaCount | int | `1` | The number of replicas for the web deployment. |
 | web.resources | object | `{}` | Resource requests and limits for the web container. |
 | web.startupProbe | object | `{}` | Startup probe configuration for the web container. |
+| web.terminationGracePeriodSeconds | int | `30` | The termination grace period in seconds for the web deployment. |
 | web.tolerations | list | `[]` | Tolerations for the web deployment. |
 | web.topologySpreadConstraints | list | `[]` | Topology spread constraints for the web deployment. |
-| web.traefik.basicAuth | object | `{"enabled":false,"realm":"","secret":""}` | Configuration for basic authentication |
+| web.traefik.basicAuth.allowBypassForIpRanges | list | `[]` | List of IP ranges that are allowed to bypass the basic auth. |
 | web.traefik.basicAuth.enabled | bool | `false` | Enable or disable basic authentication for Traefik. |
 | web.traefik.basicAuth.realm | string | `""` | Basic auth realm (f.e. name of the site that you are restricting access to) |
 | web.traefik.basicAuth.secret | string | `""` | Name of the secret that contains the user credentials. See https://doc.traefik.io/traefik/middlewares/http/basicauth/#users for more info |
@@ -100,20 +106,22 @@
 | web.traefik.domainRedirects | list | `[]` | Domains that redirect to the main domain (f.e. redirect www to non-www) Please keep in mind that the certificate need include this domain as well. Example:  - domain: www.some-site.test |
 | web.traefik.enabled | bool | `false` | Enable or disable Traefik ingress. |
 | web.traefik.extraMiddlewares | list | `[]` | Extra middlewares to use for Traefik. |
-| web.updateStrategy | object | `{"rollingUpdate":{"maxSurge":1,"maxUnavailable":0},"type":"RollingUpdate"}` | Update strategy for the web deployment. |
-| web.updateStrategy.rollingUpdate | object | `{"maxSurge":1,"maxUnavailable":0}` | Rolling update configuration. |
+| web.traefik.tlsSecretName | string | `""` | Name of the TLS secret used by the IngressRoutes. Defaults to the secret created by `web.certManager`. |
+| web.traefik.version | int | `3` | Major version of Traefik in the cluster. `3` uses the `traefik.io/v1alpha1` CRDs, `2` uses `traefik.containo.us/v1alpha1`. |
 | web.updateStrategy.rollingUpdate.maxSurge | int | `1` | The maximum number of pods that can be created above the desired number of pods during an update. |
 | web.updateStrategy.rollingUpdate.maxUnavailable | int | `0` | The maximum number of pods that can be unavailable during an update. |
 | web.updateStrategy.type | string | `"RollingUpdate"` | The update strategy for the web deployment (e.g., RollingUpdate, Recreate). |
-| worker.default.autoscaling | object | `{"enabled":false,"maxReplicas":100,"minReplicas":1,"targetCPUUtilizationPercentage":80}` | Autoscaling configuration for the worker deployment. |
+| worker.default.args | list | `[]` | Arguments of the worker container. Empty uses the image's default arguments. |
 | worker.default.autoscaling.enabled | bool | `false` | Enable or disable autoscaling for the worker deployment. |
 | worker.default.autoscaling.maxReplicas | int | `100` | The maximum number of replicas for autoscaling. |
 | worker.default.autoscaling.minReplicas | int | `1` | The minimum number of replicas for autoscaling. |
 | worker.default.autoscaling.targetCPUUtilizationPercentage | int | `80` | The target CPU utilization percentage for autoscaling. |
+| worker.default.command | list | `[]` | Command of the worker container. Empty uses the image's entrypoint. Example: ["php", "artisan", "queue:work", "--tries=3"] |
 | worker.default.env | object | `{}` | Environment variables specific to the worker container. |
 | worker.default.livenessProbe | object | `{}` | Liveness probe configuration for the worker container. |
 | worker.default.pdb.enabled | bool | `false` | Enable or disable the PodDisruptionBudget for the worker deployment. |
-| worker.default.pdb.maxUnavailable | int | `0` | The maximum number of pods that can be unavailable during a disruption. minAvailable: 1 |
+| worker.default.pdb.maxUnavailable | string | `nil` | The maximum number of pods that can be unavailable during a disruption. |
+| worker.default.pdb.minAvailable | string | `nil` | The minimum number of pods that must be available during a disruption. |
 | worker.default.readinessProbe | object | `{}` | Readiness probe configuration for the worker container. |
 | worker.default.replicaCount | int | `1` | The number of replicas for the worker deployment. |
 | worker.default.resources | object | `{}` | Resource requests and limits for the worker container. |

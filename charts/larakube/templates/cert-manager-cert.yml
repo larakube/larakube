@@ -4,12 +4,12 @@ kind: Certificate
 metadata:
   name: {{ include "larakube.fullname" . }}-cert
   labels:
-      {{- include "larakube.labels" . | nindent 4 }}
+    {{- include "larakube.labels" . | nindent 4 }}
 spec:
   secretName: {{ include "larakube.fullname" . }}-cert-secret
   dnsNames:
     {{- toYaml .Values.web.certManager.domains | nindent 4 }}
   issuerRef:
-    name: {{ .Values.web.certManager.issuer }}
-    kind: ClusterIssuer
+    name: {{ required "web.certManager.issuer is required when cert-manager is enabled" .Values.web.certManager.issuer }}
+    kind: {{ .Values.web.certManager.issuerKind }}
 {{- end }}

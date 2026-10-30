@@ -31,13 +31,18 @@ This reference explains the config values of the Helm chart.
 | podAnnotations | object | `{}` | Annotations to add to the pod. |
 | podLabels | object | `{}` | Labels to add to the pod. |
 | podSecurityContext | object | `{}` | Security context for the pod. |
+| postDeployment.command | list | `["/bin/sh","-c","php artisan cache:clear"]` | The command to run after a deployment. The job runs in its own pod, so only use commands that change shared state (cache store, database, queue). File caches like `config:cache` would not reach the web or worker pods. |
+| postDeployment.enabled | bool | `false` | Enable or disable the post-deployment job. |
+| postDeployment.env | object | `{}` | Environment variables specific to the post-deployment container. |
+| postDeployment.resources | object | `{}` | Resource requests and limits for the post-deployment container. |
+| postDeployment.retry | int | `0` | The number of times to retry the post-deployment job. |
 | revisionHistoryLimit | int | `2` | The number of old ReplicaSets to retain. |
 | scheduler.command | list | `["/bin/sh","-c","php artisan schedule:run"]` | The command to run the scheduler. |
 | scheduler.enabled | bool | `true` | Enable or disable the scheduler. |
 | scheduler.env | object | `{}` | Environment variables specific to the scheduler container. |
 | scheduler.resources | object | `{}` | Resource requests and limits for the scheduler container. |
 | scheduler.schedule | string | `"* * * * *"` | The schedule for the scheduler (e.g., every minute). |
-| secretEnvs | list | `[]` | Secret environment variables to set in the container. |
+| secretEnvs | list | `[]` | Environment variables read from existing Kubernetes Secrets, set in every container. Each entry needs `name` (the variable), `secretName` and `secretKey`. |
 | securityContext | object | `{}` | Security context for the container. |
 | service.containerPort | int | `8000` | The port on which the container will listen. |
 | service.port | int | `80` | The port on which the service will be exposed. |
@@ -50,7 +55,7 @@ This reference explains the config values of the Helm chart.
 | topologySpreadConstraints | list | `[]` | Topology spread constraints for scheduling the pod. |
 | volumeMounts | list | `[]` | Additional volumeMounts on the output Deployment definition. |
 | volumes | list | `[]` | Additional volumes on the output Deployment definition. |
-| web.affinity | object | `{}` | Affinity rules for the web deployment. |
+| web.affinity | object | `{}` | Affinity rules for the web deployment. Overrides the global `affinity`. |
 | web.autoscaling.enabled | bool | `false` | Enable or disable autoscaling for the web deployment. |
 | web.autoscaling.maxReplicas | int | `100` | The maximum number of replicas for autoscaling. |
 | web.autoscaling.minReplicas | int | `1` | The minimum number of replicas for autoscaling. |
@@ -58,6 +63,7 @@ This reference explains the config values of the Helm chart.
 | web.certManager.domains | list | `[]` | The domains to use for Cert-Manager. |
 | web.certManager.enabled | bool | `false` | Enable or disable Cert-Manager. |
 | web.certManager.issuer | string | `""` | The issuer to use for Cert-Manager. |
+| web.certManager.issuerKind | string | `"ClusterIssuer"` | The kind of the issuer (`ClusterIssuer` or a namespaced `Issuer`). |
 | web.env | object | `{}` | Environment variables specific to the web container. |
 | web.livenessProbe | object | `{}` | Liveness probe configuration for the web container. |
 | web.pdb.enabled | bool | `false` | Enable or disable the PodDisruptionBudget for the web deployment. |
@@ -82,13 +88,17 @@ This reference explains the config values of the Helm chart.
 | web.traefik.domainRedirects | list | `[]` | Domains that redirect to the main domain (f.e. redirect www to non-www) Please keep in mind that the certificate need include this domain as well. Example:  - domain: www.some-site.test |
 | web.traefik.enabled | bool | `false` | Enable or disable Traefik ingress. |
 | web.traefik.extraMiddlewares | list | `[]` | Extra middlewares to use for Traefik. |
+| web.traefik.tlsSecretName | string | `""` | Name of the TLS secret used by the IngressRoutes. Defaults to the secret created by `web.certManager`. |
+| web.traefik.version | int | `3` | Major version of Traefik in the cluster. `3` uses the `traefik.io/v1alpha1` CRDs, `2` uses `traefik.containo.us/v1alpha1`. |
 | web.updateStrategy.rollingUpdate.maxSurge | int | `1` | The maximum number of pods that can be created above the desired number of pods during an update. |
 | web.updateStrategy.rollingUpdate.maxUnavailable | int | `0` | The maximum number of pods that can be unavailable during an update. |
 | web.updateStrategy.type | string | `"RollingUpdate"` | The update strategy for the web deployment (e.g., RollingUpdate, Recreate). |
+| worker.default.args | list | `[]` | Arguments of the worker container. Empty uses the image's default arguments. |
 | worker.default.autoscaling.enabled | bool | `false` | Enable or disable autoscaling for the worker deployment. |
 | worker.default.autoscaling.maxReplicas | int | `100` | The maximum number of replicas for autoscaling. |
 | worker.default.autoscaling.minReplicas | int | `1` | The minimum number of replicas for autoscaling. |
 | worker.default.autoscaling.targetCPUUtilizationPercentage | int | `80` | The target CPU utilization percentage for autoscaling. |
+| worker.default.command | list | `[]` | Command of the worker container. Empty uses the image's entrypoint. Example: ["php", "artisan", "queue:work", "--tries=3"] |
 | worker.default.env | object | `{}` | Environment variables specific to the worker container. |
 | worker.default.livenessProbe | object | `{}` | Liveness probe configuration for the worker container. |
 | worker.default.pdb.enabled | bool | `false` | Enable or disable the PodDisruptionBudget for the worker deployment. |

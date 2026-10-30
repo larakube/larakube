@@ -239,6 +239,69 @@
       "title": "podSecurityContext",
       "type": "object"
     },
+    "postDeployment": {
+      "description": "Post-deployment job configuration. Runs once after every install and upgrade, after the database migration.",
+      "properties": {
+        "command": {
+          "description": "The command to run after a deployment. The job runs in its own pod, so only use commands that change shared\nstate (cache store, database, queue). File caches like `config:cache` would not reach the web or worker pods.",
+          "items": {
+            "anyOf": [
+              {
+                "required": [],
+                "type": "string"
+              },
+              {
+                "required": [],
+                "type": "string"
+              },
+              {
+                "required": [],
+                "type": "string"
+              }
+            ],
+            "required": []
+          },
+          "required": [],
+          "title": "command",
+          "type": "array"
+        },
+        "enabled": {
+          "default": false,
+          "description": "Enable or disable the post-deployment job.",
+          "required": [],
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "env": {
+          "description": "Environment variables specific to the post-deployment container.",
+          "required": [],
+          "title": "env",
+          "type": "object"
+        },
+        "resources": {
+          "description": "Resource requests and limits for the post-deployment container.",
+          "required": [],
+          "title": "resources",
+          "type": "object"
+        },
+        "retry": {
+          "default": 0,
+          "description": "The number of times to retry the post-deployment job.",
+          "required": [],
+          "title": "retry",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "enabled",
+        "command",
+        "retry",
+        "env",
+        "resources"
+      ],
+      "title": "postDeployment",
+      "type": "object"
+    },
     "revisionHistoryLimit": {
       "default": 2,
       "description": "The number of old ReplicaSets to retain.",
@@ -310,9 +373,32 @@
       "type": "object"
     },
     "secretEnvs": {
-      "description": "Secret environment variables to set in the container.",
+      "description": "Environment variables read from existing Kubernetes Secrets, set in every container.\nEach entry needs `name` (the variable), `secretName` and `secretKey`.",
       "items": {
-        "required": []
+        "properties": {
+          "existing": {
+            "required": [],
+            "type": "boolean"
+          },
+          "name": {
+            "required": [],
+            "type": "string"
+          },
+          "secretKey": {
+            "required": [],
+            "type": "string"
+          },
+          "secretName": {
+            "required": [],
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "secretName",
+          "secretKey"
+        ],
+        "type": "object"
       },
       "required": [],
       "title": "secretEnvs",
@@ -437,7 +523,7 @@
       "description": "Web deployment configuration.",
       "properties": {
         "affinity": {
-          "description": "Affinity rules for the web deployment.",
+          "description": "Affinity rules for the web deployment. Overrides the global `affinity`.",
           "required": [],
           "title": "affinity",
           "type": "object"
@@ -508,6 +594,16 @@
               "required": [],
               "title": "issuer",
               "type": "string"
+            },
+            "issuerKind": {
+              "default": "ClusterIssuer",
+              "description": "The kind of the issuer (`ClusterIssuer` or a namespaced `Issuer`).",
+              "enum": [
+                "ClusterIssuer",
+                "Issuer"
+              ],
+              "required": [],
+              "title": "issuerKind"
             }
           },
           "required": [
@@ -749,10 +845,27 @@
               "required": [],
               "title": "extraMiddlewares",
               "type": "array"
+            },
+            "tlsSecretName": {
+              "default": "",
+              "description": "Name of the TLS secret used by the IngressRoutes. Defaults to the secret created by `web.certManager`.",
+              "required": [],
+              "title": "tlsSecretName",
+              "type": "string"
+            },
+            "version": {
+              "default": 3,
+              "description": "Major version of Traefik in the cluster. `3` uses the `traefik.io/v1alpha1` CRDs, `2` uses `traefik.containo.us/v1alpha1`.",
+              "maximum": 3,
+              "minimum": 2,
+              "required": [],
+              "title": "version",
+              "type": "integer"
             }
           },
           "required": [
             "enabled",
+            "tlsSecretName",
             "compress",
             "domain",
             "extraMiddlewares",
@@ -836,6 +949,15 @@
       "properties": {
         "default": {
           "properties": {
+            "args": {
+              "description": "Arguments of the worker container. Empty uses the image's default arguments.",
+              "items": {
+                "required": []
+              },
+              "required": [],
+              "title": "args",
+              "type": "array"
+            },
             "autoscaling": {
               "description": "Autoscaling configuration for the worker deployment.",
               "properties": {
@@ -876,6 +998,15 @@
               ],
               "title": "autoscaling",
               "type": "object"
+            },
+            "command": {
+              "description": "Command of the worker container. Empty uses the image's entrypoint.\nExample: [\"php\", \"artisan\", \"queue:work\", \"--tries=3\"]",
+              "items": {
+                "required": []
+              },
+              "required": [],
+              "title": "command",
+              "type": "array"
             },
             "env": {
               "description": "Environment variables specific to the worker container.",
@@ -992,6 +1123,8 @@
           "required": [
             "replicaCount",
             "autoscaling",
+            "command",
+            "args",
             "env",
             "resources",
             "updateStrategy",
@@ -1031,11 +1164,11 @@
     "topologySpreadConstraints",
     "revisionHistoryLimit",
     "env",
-    "secretEnvs",
     "web",
     "worker",
     "scheduler",
-    "databaseMigration"
+    "databaseMigration",
+    "postDeployment"
   ],
   "type": "object"
 }

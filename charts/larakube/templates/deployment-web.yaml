@@ -46,21 +46,10 @@ spec:
             - name: http
               containerPort: {{ .Values.service.containerPort }}
               protocol: TCP
+          {{- with include "larakube.containerEnv" (dict "root" . "env" .Values.web.env) | trim }}
           env:
-            # TODO: check if there are any envs
-            {{- range $key, $value := .Values.web.env }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
-            {{- range $key, $value := .Values.secretEnvs }}
-            {{- if $value.existing }}
-            - name: {{ $value.name }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ $value.secretName }}
-                  key: {{ $value.secretKey }}
-            {{- end }}
-            {{- end }}
+            {{- . | nindent 12 }}
+          {{- end }}
           envFrom:
             - configMapRef:
                 name: {{ include "larakube.fullname" . }}-env
@@ -100,7 +89,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       terminationGracePeriodSeconds: {{ .Values.web.terminationGracePeriodSeconds }}
-      {{- with .Values.affinity }}
+      {{- with (default .Values.affinity .Values.web.affinity) }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}

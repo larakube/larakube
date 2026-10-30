@@ -1,5 +1,5 @@
 {{- range $i, $value := .Values.worker }}
-{{- if $value.autoscaling.enabled }}
+{{- if dig "autoscaling" "enabled" false $value }}
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -12,8 +12,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ include "larakube.fullname" $ }}-worker-{{ $i }}
-  minReplicas: {{ $value.autoscaling.minReplicas }}
-  maxReplicas: {{ $value.autoscaling.maxReplicas }}
+  minReplicas: {{ dig "minReplicas" 1 $value.autoscaling }}
+  maxReplicas: {{ required (printf "worker.%s.autoscaling.maxReplicas is required when autoscaling is enabled" $i) $value.autoscaling.maxReplicas }}
   metrics:
     {{- if $value.autoscaling.targetCPUUtilizationPercentage }}
     - type: Resource
