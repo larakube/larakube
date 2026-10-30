@@ -1,6 +1,11 @@
 name: Lint Helm Chart
 
-on: [push]
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   lint:
@@ -15,6 +20,15 @@ jobs:
 
       - name: "Lint helm chart"
         run: helm lint charts/larakube --values charts/larakube/values.yaml
+
+      - name: "Lint and render CI values files"
+        run: |
+          for values in charts/larakube/ci/*-values.yaml; do
+            echo "::group::$values"
+            helm lint charts/larakube --strict --values "$values"
+            helm template ci charts/larakube --values "$values" > /dev/null
+            echo "::endgroup::"
+          done
 
       - name: "Build helm chart"
         run: helm template charts/larakube --values charts/larakube/values.yaml --output-dir build --debug

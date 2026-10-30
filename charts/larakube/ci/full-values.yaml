@@ -1,0 +1,148 @@
+# Rendered and linted in CI. Enables every optional feature so template bugs surface.
+image:
+  repository: ghcr.io/example/laravel-app
+  tag: "1.0.0"
+
+podAnnotations:
+  example.com/annotation: "yes"
+podLabels:
+  example.com/team: web
+
+env:
+  APP_ENV: production
+  APP_DEBUG: false
+  DB_PORT: 5432
+  TRUSTED_PROXIES: "*"
+
+secretEnvs:
+  - existing: true
+    name: APP_KEY
+    secretName: laravel-app-secrets
+    secretKey: APP_KEY
+
+volumes:
+  - name: storage
+    emptyDir: {}
+volumeMounts:
+  - name: storage
+    mountPath: /var/www/html/storage/app
+
+nodeSelector:
+  kubernetes.io/os: linux
+tolerations:
+  - key: dedicated
+    operator: Equal
+    value: laravel
+    effect: NoSchedule
+affinity:
+  nodeAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+            - key: kubernetes.io/arch
+              operator: In
+              values: [amd64]
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: larakube
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: app.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: app-example-tls
+      hosts:
+        - app.example.com
+
+web:
+  env:
+    CONTAINER_ROLE: web
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+  pdb:
+    enabled: true
+    maxUnavailable: 0
+  livenessProbe:
+    httpGet:
+      path: /up
+      port: http
+  readinessProbe:
+    httpGet:
+      path: /up
+      port: http
+  preStopCommand: ["sleep", "5"]
+  certManager:
+    enabled: true
+    issuer: letsencrypt
+    issuerKind: Issuer
+    domains:
+      - app.example.com
+      - www.app.example.com
+  traefik:
+    enabled: true
+    domain: app.example.com
+    customResponseHeaders:
+      X-Frame-Options: SAMEORIGIN
+    basicAuth:
+      enabled: true
+      secret: app-basic-auth
+      realm: Staging
+      allowBypassForIpRanges:
+        - 10.0.0.0/8
+        - 192.168.1.10
+    domainRedirects:
+      - domain: www.app.example.com
+
+worker:
+  default:
+    replicaCount: 1
+    env:
+      CONTAINER_ROLE: worker
+    pdb:
+      enabled: true
+      minAvailable: 1
+    livenessProbe:
+      exec:
+        command: ["php", "artisan", "--version"]
+  high:
+    replicaCount: 2
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 3
+    env:
+      QUEUE: high
+    updateStrategy:
+      type: RollingUpdate
+    pdb:
+      enabled: false
+
+scheduler:
+  env:
+    CONTAINER_ROLE: scheduler
+
+databaseMigration:
+  enabled: true
+  env:
+    CONTAINER_ROLE: migration
+
+postDeployment:
+  enabled: true
+  command:
+    - /bin/sh
+    - -c
+    - php artisan cache:clear && php artisan queue:restart
+  env:
+    CONTAINER_ROLE: post-deployment
