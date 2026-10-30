@@ -39,7 +39,7 @@ jobs:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "Run GitHub action workflow manually"
-        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        uses: convictional/trigger-workflow-and-wait@v1.6.5
         with:
           owner: larakube
           repo: larakube
