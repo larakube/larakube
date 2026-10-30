@@ -49,6 +49,11 @@
 | podAnnotations | object | `{}` | Annotations to add to the pod. |
 | podLabels | object | `{}` | Labels to add to the pod. |
 | podSecurityContext | object | `{}` | Security context for the pod. |
+| postDeployment.command | list | `["/bin/sh","-c","php artisan cache:clear"]` | The command to run after a deployment. The job runs in its own pod, so only use commands that change shared state (cache store, database, queue). File caches like `config:cache` would not reach the web or worker pods. |
+| postDeployment.enabled | bool | `false` | Enable or disable the post-deployment job. |
+| postDeployment.env | object | `{}` | Environment variables specific to the post-deployment container. |
+| postDeployment.resources | object | `{}` | Resource requests and limits for the post-deployment container. |
+| postDeployment.retry | int | `0` | The number of times to retry the post-deployment job. |
 | revisionHistoryLimit | int | `2` | The number of old ReplicaSets to retain. |
 | scheduler.command | list | `["/bin/sh","-c","php artisan schedule:run"]` | The command to run the scheduler. |
 | scheduler.enabled | bool | `true` | Enable or disable the scheduler. |

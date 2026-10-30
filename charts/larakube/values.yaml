@@ -437,3 +437,25 @@ databaseMigration:
 
   # -- Resource requests and limits for the database migration container.
   resources: { }
+
+# Post-deployment job configuration. Runs once after every install and upgrade, after the database migration.
+postDeployment:
+
+  # -- Enable or disable the post-deployment job.
+  enabled: false
+
+  # -- The command to run after a deployment. The job runs in its own pod, so only use commands that change shared
+  # state (cache store, database, queue). File caches like `config:cache` would not reach the web or worker pods.
+  command:
+    - /bin/sh
+    - -c
+    - php artisan cache:clear
+
+  # -- The number of times to retry the post-deployment job.
+  retry: 0
+
+  # -- Environment variables specific to the post-deployment container.
+  env: { }
+
+  # -- Resource requests and limits for the post-deployment container.
+  resources: { }

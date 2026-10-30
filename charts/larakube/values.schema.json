@@ -239,6 +239,69 @@
       "title": "podSecurityContext",
       "type": "object"
     },
+    "postDeployment": {
+      "description": "Post-deployment job configuration. Runs once after every install and upgrade, after the database migration.",
+      "properties": {
+        "command": {
+          "description": "The command to run after a deployment. The job runs in its own pod, so only use commands that change shared\nstate (cache store, database, queue). File caches like `config:cache` would not reach the web or worker pods.",
+          "items": {
+            "anyOf": [
+              {
+                "required": [],
+                "type": "string"
+              },
+              {
+                "required": [],
+                "type": "string"
+              },
+              {
+                "required": [],
+                "type": "string"
+              }
+            ],
+            "required": []
+          },
+          "required": [],
+          "title": "command",
+          "type": "array"
+        },
+        "enabled": {
+          "default": false,
+          "description": "Enable or disable the post-deployment job.",
+          "required": [],
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "env": {
+          "description": "Environment variables specific to the post-deployment container.",
+          "required": [],
+          "title": "env",
+          "type": "object"
+        },
+        "resources": {
+          "description": "Resource requests and limits for the post-deployment container.",
+          "required": [],
+          "title": "resources",
+          "type": "object"
+        },
+        "retry": {
+          "default": 0,
+          "description": "The number of times to retry the post-deployment job.",
+          "required": [],
+          "title": "retry",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "enabled",
+        "command",
+        "retry",
+        "env",
+        "resources"
+      ],
+      "title": "postDeployment",
+      "type": "object"
+    },
     "revisionHistoryLimit": {
       "default": 2,
       "description": "The number of old ReplicaSets to retain.",
@@ -1062,7 +1125,8 @@
     "web",
     "worker",
     "scheduler",
-    "databaseMigration"
+    "databaseMigration",
+    "postDeployment"
   ],
   "type": "object"
 }

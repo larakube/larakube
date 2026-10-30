@@ -88,3 +88,23 @@ Name suffix for a domain redirect, e.g. www.example.com -> www-example-com
 {{- define "larakube.domainSlug" -}}
 {{- . | replace "." "-" | kebabcase }}
 {{- end }}
+
+{{/*
+Container env: component-specific plain values plus secretEnvs references.
+Usage: include "larakube.containerEnv" (dict "root" $ "env" .Values.web.env)
+*/}}
+{{- define "larakube.containerEnv" -}}
+{{- range $key, $value := .env }}
+- name: {{ $key }}
+  value: {{ $value | toString | quote }}
+{{- end }}
+{{- range .root.Values.secretEnvs }}
+{{- if .existing }}
+- name: {{ .name }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ .secretName }}
+      key: {{ .secretKey }}
+{{- end }}
+{{- end }}
+{{- end }}
