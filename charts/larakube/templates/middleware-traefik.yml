@@ -1,65 +1,80 @@
 {{- if .Values.web.traefik.enabled }}
-apiVersion: traefik.containo.us/v1alpha1
+{{- $fullName := include "larakube.fullname" . }}
+{{- $apiVersion := include "larakube.traefikApiVersion" . }}
+{{- $traefik := .Values.web.traefik }}
+{{- if $traefik.compress }}
+---
+apiVersion: {{ $apiVersion }}
 kind: Middleware
 metadata:
-  name: {{ include "larakube.fullname" . }}-traefik-middleware-compress
+  name: {{ $fullName }}-traefik-middleware-compress
   labels:
     {{- include "larakube.labels" . | nindent 4 }}
 spec:
   compress:
     minResponseBodyBytes: 1200
+{{- end }}
+{{- if or $traefik.customRequestHeaders $traefik.customResponseHeaders }}
 ---
-{{- if or .Values.web.traefik.customRequestHeaders .Values.web.traefik.customResponseHeaders }}
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: {{ $apiVersion }}
 kind: Middleware
 metadata:
-  name: {{ include "larakube.fullname" . }}-traefik-middleware-custom-headers
+  name: {{ $fullName }}-traefik-middleware-custom-headers
   labels:
     {{- include "larakube.labels" . | nindent 4 }}
 spec:
   headers:
-    {{- with .Values.web.traefik.customRequestHeaders }}
+    {{- with $traefik.customRequestHeaders }}
     customRequestHeaders:
-      {{- toYaml . | nindent 6 }}
+      {{- range $name, $value := . }}
+      {{ $name }}: {{ $value | toString | quote }}
+      {{- end }}
     {{- end }}
-    {{- with .Values.web.traefik.customResponseHeaders }}
+    {{- with $traefik.customResponseHeaders }}
     customResponseHeaders:
-      {{- toYaml . | nindent 6 }}
+      {{- range $name, $value := . }}
+      {{ $name }}: {{ $value | toString | quote }}
+      {{- end }}
     {{- end }}
----
 {{- end }}
-apiVersion: traefik.containo.us/v1alpha1
+---
+apiVersion: {{ $apiVersion }}
 kind: Middleware
 metadata:
-  name: {{ include "larakube.fullname" . }}-traefik-middleware-permanent-redirect-https
+  name: {{ $fullName }}-traefik-middleware-permanent-redirect-https
   labels:
     {{- include "larakube.labels" . | nindent 4 }}
 spec:
   redirectScheme:
     scheme: https
     permanent: true
+{{- if $traefik.basicAuth.enabled }}
 ---
-{{- if .Values.web.traefik.basicAuth.enabled }}
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: {{ $apiVersion }}
 kind: Middleware
 metadata:
-  name: {{ include "larakube.fullname" . }}-traefik-middleware-basic-auth
+  name: {{ $fullName }}-traefik-middleware-basic-auth
+  labels:
+    {{- include "larakube.labels" . | nindent 4 }}
 spec:
   basicAuth:
-    secret: {{ .Values.web.traefik.basicAuth.secret }}
-    realm: {{ .Values.web.traefik.basicAuth.realm }}
----
+    secret: {{ required "web.traefik.basicAuth.secret is required when basic auth is enabled" $traefik.basicAuth.secret | quote }}
+    {{- with $traefik.basicAuth.realm }}
+    realm: {{ . | quote }}
+    {{- end }}
 {{- end }}
-{{- range $i, $value := .Values.web.traefik.domainRedirects }}
-apiVersion: traefik.containo.us/v1alpha1
+{{- range $traefik.domainRedirects }}
+---
+apiVersion: {{ $apiVersion }}
 kind: Middleware
 metadata:
-  name: {{ include "larakube.fullname" $ }}-traefik-middleware-domain-redirect-{{ $value.domain | replace "." "-" | kebabcase }}
+  name: {{ $fullName }}-traefik-middleware-domain-redirect-{{ include "larakube.domainSlug" .domain }}
+  labels:
+    {{- include "larakube.labels" $ | nindent 4 }}
 spec:
   redirectRegex:
-    regex: "^https?://{{ $value.domain }}/(.*)"
-    replacement: "https://{{ $.Values.web.traefik.domain }}/${1}"
+    regex: {{ printf "^https?://%s/(.*)" (regexQuoteMeta .domain) | quote }}
+    replacement: {{ printf "https://%s/${1}" $traefik.domain | quote }}
     permanent: true
----
 {{- end }}
 {{- end }}

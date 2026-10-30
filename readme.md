@@ -78,6 +78,7 @@
 | web.certManager.domains | list | `[]` | The domains to use for Cert-Manager. |
 | web.certManager.enabled | bool | `false` | Enable or disable Cert-Manager. |
 | web.certManager.issuer | string | `""` | The issuer to use for Cert-Manager. |
+| web.certManager.issuerKind | string | `"ClusterIssuer"` | The kind of the issuer (`ClusterIssuer` or a namespaced `Issuer`). |
 | web.env | object | `{}` | Environment variables specific to the web container. |
 | web.livenessProbe | object | `{}` | Liveness probe configuration for the web container. |
 | web.pdb | object | `{"enabled":false,"maxUnavailable":0}` | PodDisruptionBudget configuration for the web deployment. |
@@ -100,6 +101,8 @@
 | web.traefik.domainRedirects | list | `[]` | Domains that redirect to the main domain (f.e. redirect www to non-www) Please keep in mind that the certificate need include this domain as well. Example:  - domain: www.some-site.test |
 | web.traefik.enabled | bool | `false` | Enable or disable Traefik ingress. |
 | web.traefik.extraMiddlewares | list | `[]` | Extra middlewares to use for Traefik. |
+| web.traefik.tlsSecretName | string | `""` | Name of the TLS secret used by the IngressRoutes. Defaults to the secret created by `web.certManager`. |
+| web.traefik.version | int | `3` | Major version of Traefik in the cluster. `3` uses the `traefik.io/v1alpha1` CRDs, `2` uses `traefik.containo.us/v1alpha1`. |
 | web.updateStrategy | object | `{"rollingUpdate":{"maxSurge":1,"maxUnavailable":0},"type":"RollingUpdate"}` | Update strategy for the web deployment. |
 | web.updateStrategy.rollingUpdate | object | `{"maxSurge":1,"maxUnavailable":0}` | Rolling update configuration. |
 | web.updateStrategy.rollingUpdate.maxSurge | int | `1` | The maximum number of pods that can be created above the desired number of pods during an update. |

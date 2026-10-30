@@ -1,121 +1,131 @@
 {{- if .Values.web.traefik.enabled }}
-apiVersion: traefik.containo.us/v1alpha1
+{{- $fullName := include "larakube.fullname" . }}
+{{- $apiVersion := include "larakube.traefikApiVersion" . }}
+{{- $tlsSecretName := include "larakube.traefikTlsSecretName" . }}
+{{- $traefik := .Values.web.traefik }}
+---
+apiVersion: {{ $apiVersion }}
 kind: IngressRoute
 metadata:
-  name: {{ include "larakube.fullname" . }}-traefik-ingress
+  name: {{ $fullName }}-traefik-ingress
   labels:
     {{- include "larakube.labels" . | nindent 4 }}
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`{{ .Values.web.traefik.domain }}`)
+    - match: Host(`{{ $traefik.domain }}`)
       kind: Rule
       services:
-        - name: {{ include "larakube.fullname" . }}-web
+        - name: {{ $fullName }}-web
           port: {{ .Values.service.port }}
       middlewares:
-        {{- if or .Values.web.traefik.customRequestHeaders .Values.web.traefik.customResponseHeaders }}
-        - name: {{ include "larakube.fullname" . }}-traefik-middleware-custom-headers
+        {{- if or $traefik.customRequestHeaders $traefik.customResponseHeaders }}
+        - name: {{ $fullName }}-traefik-middleware-custom-headers
         {{- end }}
-        {{- if .Values.web.traefik.compress }}
-        - name: {{ include "larakube.fullname" . }}-traefik-middleware-compress
+        {{- if $traefik.compress }}
+        - name: {{ $fullName }}-traefik-middleware-compress
         {{- end }}
-        {{- if .Values.web.traefik.basicAuth.enabled }}
-        - name: {{ include "larakube.fullname" . }}-traefik-middleware-basic-auth
+        {{- if $traefik.basicAuth.enabled }}
+        - name: {{ $fullName }}-traefik-middleware-basic-auth
         {{- end }}
-        {{- range $key, $value := .Values.web.traefik.extraMiddlewares }}
-        - name: {{ $value }}
+        {{- range $traefik.extraMiddlewares }}
+        - name: {{ . }}
         {{- end }}
   tls:
-    secretName: {{ include "larakube.fullname" . }}-cert-secret
+    secretName: {{ $tlsSecretName }}
+{{- if and $traefik.basicAuth.enabled $traefik.basicAuth.allowBypassForIpRanges }}
+{{- $clientIPs := list }}
+{{- range $traefik.basicAuth.allowBypassForIpRanges }}
+{{- $clientIPs = append $clientIPs (printf "ClientIP(`%s`)" .) }}
+{{- end }}
 ---
-{{- if and .Values.web.traefik.basicAuth.enabled .Values.web.traefik.basicAuth.allowBypassForIpRanges -}}
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: {{ $apiVersion }}
 kind: IngressRoute
 metadata:
-  name: {{ include "larakube.fullname" . }}-traefik-ingress-bypass-basic-auth
+  name: {{ $fullName }}-traefik-ingress-bypass-basic-auth
   labels:
     {{- include "larakube.labels" . | nindent 4 }}
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`{{ .Values.web.traefik.domain }}`) && ClientIP(`{{ join "`, `" .Values.web.traefik.basicAuth.allowBypassForIpRanges }}`)
+    # One ClientIP() per range: Traefik v3 accepts a single IP/CIDR per matcher.
+    - match: Host(`{{ $traefik.domain }}`) && ({{ join " || " $clientIPs }})
       kind: Rule
       services:
-        - name: {{ include "larakube.fullname" . }}-web
+        - name: {{ $fullName }}-web
           port: {{ .Values.service.port }}
       middlewares:
-        {{- if or .Values.web.traefik.customRequestHeaders .Values.web.traefik.customResponseHeaders }}
-        - name: {{ include "larakube.fullname" . }}-traefik-middleware-custom-headers
+        {{- if or $traefik.customRequestHeaders $traefik.customResponseHeaders }}
+        - name: {{ $fullName }}-traefik-middleware-custom-headers
         {{- end }}
-        {{- if .Values.web.traefik.compress }}
-        - name: {{ include "larakube.fullname" . }}-traefik-middleware-compress
+        {{- if $traefik.compress }}
+        - name: {{ $fullName }}-traefik-middleware-compress
         {{- end }}
-        {{- range $key, $value := .Values.web.traefik.extraMiddlewares }}
-        - name: {{ $value }}
+        {{- range $traefik.extraMiddlewares }}
+        - name: {{ . }}
         {{- end }}
   tls:
-    secretName: {{ include "larakube.fullname" . }}-cert-secret
+    secretName: {{ $tlsSecretName }}
+{{- end }}
 ---
-{{- end -}}
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: {{ $apiVersion }}
 kind: IngressRoute
 metadata:
-  name: {{ include "larakube.fullname" . }}-traefik-ingress-redirect-to-https
+  name: {{ $fullName }}-traefik-ingress-redirect-to-https
   labels:
     {{- include "larakube.labels" . | nindent 4 }}
 spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`{{ .Values.web.traefik.domain }}`)
+    - match: Host(`{{ $traefik.domain }}`)
       kind: Rule
       services:
         - name: noop@internal
           kind: TraefikService
       middlewares:
-        - name: {{ include "larakube.fullname" . }}-traefik-middleware-permanent-redirect-https
+        - name: {{ $fullName }}-traefik-middleware-permanent-redirect-https
+{{- range $traefik.domainRedirects }}
+{{- $slug := include "larakube.domainSlug" .domain }}
 ---
-{{- range $i, $value := .Values.web.traefik.domainRedirects }}
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: {{ $apiVersion }}
 kind: IngressRoute
 metadata:
-  name: {{ include "larakube.fullname" $ }}-traefik-ingress-https-domain-redirect-{{ $value.domain | replace "." "-" | kebabcase }}
+  name: {{ $fullName }}-traefik-ingress-https-domain-redirect-{{ $slug }}
   labels:
     {{- include "larakube.labels" $ | nindent 4 }}
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`{{ $value.domain }}`)
+    - match: Host(`{{ .domain }}`)
       kind: Rule
       services:
         - name: noop@internal
           kind: TraefikService
       middlewares:
-        - name: {{ include "larakube.fullname" $ }}-traefik-middleware-domain-redirect-{{ $value.domain | replace "." "-" | kebabcase }}
+        - name: {{ $fullName }}-traefik-middleware-domain-redirect-{{ $slug }}
   tls:
-    secretName: {{ include "larakube.fullname" $ }}-cert-secret
+    secretName: {{ $tlsSecretName }}
 ---
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: {{ $apiVersion }}
 kind: IngressRoute
 metadata:
-  name: {{ include "larakube.fullname" $ }}-traefik-ingress-http-domain-redirect-{{ $value.domain | replace "." "-" | kebabcase }}
+  name: {{ $fullName }}-traefik-ingress-http-domain-redirect-{{ $slug }}
   labels:
     {{- include "larakube.labels" $ | nindent 4 }}
 spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`{{ $value.domain }}`)
+    - match: Host(`{{ .domain }}`)
       kind: Rule
       services:
         - name: noop@internal
           kind: TraefikService
       middlewares:
-        - name: {{ include "larakube.fullname" $ }}-traefik-middleware-domain-redirect-{{ $value.domain | replace "." "-" | kebabcase }}
----
+        - name: {{ $fullName }}-traefik-middleware-domain-redirect-{{ $slug }}
 {{- end }}
 {{- end }}

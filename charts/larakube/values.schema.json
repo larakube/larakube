@@ -508,6 +508,16 @@
               "required": [],
               "title": "issuer",
               "type": "string"
+            },
+            "issuerKind": {
+              "default": "ClusterIssuer",
+              "description": "The kind of the issuer (`ClusterIssuer` or a namespaced `Issuer`).",
+              "enum": [
+                "ClusterIssuer",
+                "Issuer"
+              ],
+              "required": [],
+              "title": "issuerKind"
             }
           },
           "required": [
@@ -749,10 +759,27 @@
               "required": [],
               "title": "extraMiddlewares",
               "type": "array"
+            },
+            "tlsSecretName": {
+              "default": "",
+              "description": "Name of the TLS secret used by the IngressRoutes. Defaults to the secret created by `web.certManager`.",
+              "required": [],
+              "title": "tlsSecretName",
+              "type": "string"
+            },
+            "version": {
+              "default": 3,
+              "description": "Major version of Traefik in the cluster. `3` uses the `traefik.io/v1alpha1` CRDs, `2` uses `traefik.containo.us/v1alpha1`.",
+              "maximum": 3,
+              "minimum": 2,
+              "required": [],
+              "title": "version",
+              "type": "integer"
             }
           },
           "required": [
             "enabled",
+            "tlsSecretName",
             "compress",
             "domain",
             "extraMiddlewares",

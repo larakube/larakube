@@ -248,6 +248,12 @@ web:
     # -- The issuer to use for Cert-Manager.
     issuer: ""
 
+    # @schema
+    # enum: [ClusterIssuer, Issuer]
+    # @schema
+    # -- The kind of the issuer (`ClusterIssuer` or a namespaced `Issuer`).
+    issuerKind: ClusterIssuer
+
     # -- The domains to use for Cert-Manager.
     domains: []
 
@@ -256,6 +262,17 @@ web:
 
     # -- Enable or disable Traefik ingress.
     enabled: false
+
+    # @schema
+    # type: integer
+    # minimum: 2
+    # maximum: 3
+    # @schema
+    # -- Major version of Traefik in the cluster. `3` uses the `traefik.io/v1alpha1` CRDs, `2` uses `traefik.containo.us/v1alpha1`.
+    version: 3
+
+    # -- Name of the TLS secret used by the IngressRoutes. Defaults to the secret created by `web.certManager`.
+    tlsSecretName: ""
 
     # -- Enable or disable compression for Traefik.
     compress: true

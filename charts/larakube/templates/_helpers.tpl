@@ -60,3 +60,31 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Traefik CRD apiVersion. Traefik v3 only serves traefik.io; traefik.containo.us is the Traefik v2 group.
+*/}}
+{{- define "larakube.traefikApiVersion" -}}
+{{- $version := .Values.web.traefik.version | toString }}
+{{- if eq $version "3" }}
+{{- "traefik.io/v1alpha1" }}
+{{- else if eq $version "2" }}
+{{- "traefik.containo.us/v1alpha1" }}
+{{- else }}
+{{- fail (printf "web.traefik.version must be 3 or 2, got %q" $version) }}
+{{- end }}
+{{- end }}
+
+{{/*
+TLS secret used by the Traefik IngressRoutes.
+*/}}
+{{- define "larakube.traefikTlsSecretName" -}}
+{{- default (printf "%s-cert-secret" (include "larakube.fullname" .)) .Values.web.traefik.tlsSecretName }}
+{{- end }}
+
+{{/*
+Name suffix for a domain redirect, e.g. www.example.com -> www-example-com
+*/}}
+{{- define "larakube.domainSlug" -}}
+{{- . | replace "." "-" | kebabcase }}
+{{- end }}
