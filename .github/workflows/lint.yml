@@ -51,8 +51,10 @@ jobs:
         uses: actions/checkout@v4
 
       # helm-unittest image (Helm 4.3.0, helm-unittest 1.2.1), pinned by digest.
+      # The container user differs from the runner user and must be able to create unittests/__snapshot__.
       - name: "Run helm-unittest"
         run: |
+          chmod a+w charts/larakube/unittests
           docker run --rm -v "$PWD/charts/larakube:/apps" \
             helmunittest/helm-unittest:4.3.0-1.2.1@sha256:28ea86c3e0b07f501f0c2e9c08b9f41e240f4a4b571cb5106b36cf0f0607e989 \
             -f 'unittests/*_test.yaml' .
