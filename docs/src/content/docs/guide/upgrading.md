@@ -101,6 +101,11 @@ The following settings were documented but not applied to worker pods. Check the
 set and the global `affinity` otherwise, like `web.tolerations` and `web.topologySpreadConstraints`. If you had set
 `web.affinity`, your web pods are rescheduled according to it.
 
+### The migration Job uses the global scheduling settings
+
+The database migration Job now uses the global `nodeSelector`, `affinity` and `tolerations`, like the other pods.
+Before, it ignored them and could stay `Pending` on clusters with tainted nodes.
+
 ### Other changes
 
 - The standard `ingress` now routes to the `<release>-web` Service. Before, it pointed at a Service that does not exist.
