@@ -1,0 +1,33 @@
+suite: worker autoscaling
+release:
+  name: t
+set:
+  image.repository: ghcr.io/example/app
+templates:
+  - templates/hpa-worker.yaml
+tests:
+  - it: defaults minReplicas to 1 for a worker without one
+    set:
+      worker.emails:
+        autoscaling:
+          enabled: true
+          maxReplicas: 4
+    documentSelector:
+      path: metadata.name
+      value: t-larakube-worker-emails
+    asserts:
+      - equal:
+          path: spec.minReplicas
+          value: 1
+      - equal:
+          path: spec.maxReplicas
+          value: 4
+
+  - it: fails without maxReplicas
+    set:
+      worker.emails:
+        autoscaling:
+          enabled: true
+    asserts:
+      - failedTemplate:
+          errorPattern: "worker.emails.autoscaling.maxReplicas is required"

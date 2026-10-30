@@ -111,6 +111,8 @@ Before, it ignored them and could stay `Pending` on clusters with tainted nodes.
 - The standard `ingress` now routes to the `<release>-web` Service. Before, it pointed at a Service that does not exist.
 - The chart fails with an error message if `web.traefik.basicAuth` is enabled without a `secret`, or
   `web.certManager` is enabled without an `issuer`. These setups did not work before either.
+- The chart fails with an error message if a worker enables `autoscaling` without `maxReplicas`.
+  This setup did not work before either. `worker.<name>.autoscaling.minReplicas` now defaults to `1`.
 - New, optional settings: `web.traefik.tlsSecretName`, `web.certManager.issuerKind`,
   `worker.<name>.command` / `args` ([queue workers](/guide/deployment/#queue-workers)) and
   [`postDeployment`](/guide/deployment/#run-commands-after-a-deployment).
