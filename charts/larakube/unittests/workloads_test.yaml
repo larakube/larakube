@@ -193,3 +193,24 @@ tests:
     asserts:
       - notExists:
           path: spec.template.spec.containers[0].env
+
+  - it: uses the image entrypoint for workers without a command
+    template: templates/deployment-worker.yaml
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].command
+      - notExists:
+          path: spec.template.spec.containers[0].args
+
+  - it: sets the worker command and args
+    template: templates/deployment-worker.yaml
+    set:
+      worker.default.command: ["php", "artisan", "queue:work"]
+      worker.default.args: ["--tries=3"]
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].command
+          value: ["php", "artisan", "queue:work"]
+      - equal:
+          path: spec.template.spec.containers[0].args
+          value: ["--tries=3"]

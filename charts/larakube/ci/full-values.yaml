@@ -108,6 +108,8 @@ web:
 worker:
   default:
     replicaCount: 1
+    command: ["php", "artisan", "queue:work"]
+    args: ["--tries=3"]
     env:
       CONTAINER_ROLE: worker
     pdb:

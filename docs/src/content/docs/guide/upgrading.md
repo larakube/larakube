@@ -100,5 +100,6 @@ The following settings were documented but not applied to worker pods. Check the
 - The standard `ingress` now routes to the `<release>-web` Service. Before, it pointed at a Service that does not exist.
 - The chart fails with an error message if `web.traefik.basicAuth` is enabled without a `secret`, or
   `web.certManager` is enabled without an `issuer`. These setups did not work before either.
-- New, optional settings: `web.traefik.tlsSecretName`, `web.certManager.issuerKind` and
+- New, optional settings: `web.traefik.tlsSecretName`, `web.certManager.issuerKind`,
+  `worker.<name>.command` / `args` ([queue workers](/guide/deployment/#queue-workers)) and
   [`postDeployment`](/guide/deployment/#run-commands-after-a-deployment).

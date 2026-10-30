@@ -20,6 +20,23 @@ This can be useful for example in one of the following cases:
  - The image of the application was updated, but the tag of the image did not change (f.e. the tag is `latest` or `develop`).
 
 
+## Queue workers
+
+Every entry under `worker` creates a Deployment named `<release>-worker-<name>`. By default the worker container runs
+the image's entrypoint, like the web container. If your image does not pick its role from an environment variable,
+set the command of the worker:
+
+```yaml
+worker:
+  default:
+    command: ["php", "artisan", "queue:work"]
+    args: ["--tries=3", "--max-time=3600"]
+  high:
+    replicaCount: 2
+    command: ["php", "artisan", "queue:work"]
+    args: ["--queue=high"]
+```
+
 ## Run commands after a deployment
 
 LaraKube can run commands once after every `helm install` and `helm upgrade`, for example to clear the application

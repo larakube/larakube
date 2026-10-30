@@ -926,6 +926,15 @@
       "properties": {
         "default": {
           "properties": {
+            "args": {
+              "description": "Arguments of the worker container. Empty uses the image's default arguments.",
+              "items": {
+                "required": []
+              },
+              "required": [],
+              "title": "args",
+              "type": "array"
+            },
             "autoscaling": {
               "description": "Autoscaling configuration for the worker deployment.",
               "properties": {
@@ -966,6 +975,15 @@
               ],
               "title": "autoscaling",
               "type": "object"
+            },
+            "command": {
+              "description": "Command of the worker container. Empty uses the image's entrypoint.\nExample: [\"php\", \"artisan\", \"queue:work\", \"--tries=3\"]",
+              "items": {
+                "required": []
+              },
+              "required": [],
+              "title": "command",
+              "type": "array"
             },
             "env": {
               "description": "Environment variables specific to the worker container.",
@@ -1082,6 +1100,8 @@
           "required": [
             "replicaCount",
             "autoscaling",
+            "command",
+            "args",
             "env",
             "resources",
             "updateStrategy",

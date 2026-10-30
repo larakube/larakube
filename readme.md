@@ -111,10 +111,12 @@
 | web.updateStrategy.rollingUpdate.maxSurge | int | `1` | The maximum number of pods that can be created above the desired number of pods during an update. |
 | web.updateStrategy.rollingUpdate.maxUnavailable | int | `0` | The maximum number of pods that can be unavailable during an update. |
 | web.updateStrategy.type | string | `"RollingUpdate"` | The update strategy for the web deployment (e.g., RollingUpdate, Recreate). |
+| worker.default.args | list | `[]` | Arguments of the worker container. Empty uses the image's default arguments. |
 | worker.default.autoscaling.enabled | bool | `false` | Enable or disable autoscaling for the worker deployment. |
 | worker.default.autoscaling.maxReplicas | int | `100` | The maximum number of replicas for autoscaling. |
 | worker.default.autoscaling.minReplicas | int | `1` | The minimum number of replicas for autoscaling. |
 | worker.default.autoscaling.targetCPUUtilizationPercentage | int | `80` | The target CPU utilization percentage for autoscaling. |
+| worker.default.command | list | `[]` | Command of the worker container. Empty uses the image's entrypoint. Example: ["php", "artisan", "queue:work", "--tries=3"] |
 | worker.default.env | object | `{}` | Environment variables specific to the worker container. |
 | worker.default.livenessProbe | object | `{}` | Liveness probe configuration for the worker container. |
 | worker.default.pdb.enabled | bool | `false` | Enable or disable the PodDisruptionBudget for the worker deployment. |

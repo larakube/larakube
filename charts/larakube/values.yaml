@@ -337,6 +337,13 @@ worker:
       targetCPUUtilizationPercentage: 80
       # targetMemoryUtilizationPercentage: 80
 
+    # -- Command of the worker container. Empty uses the image's entrypoint.
+    # Example: ["php", "artisan", "queue:work", "--tries=3"]
+    command: []
+
+    # -- Arguments of the worker container. Empty uses the image's default arguments.
+    args: []
+
     # -- Environment variables specific to the worker container.
     env: { }
 

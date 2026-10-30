@@ -44,6 +44,14 @@ spec:
             {{- toYaml $.Values.securityContext | nindent 12 }}
           image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default $.Chart.AppVersion }}"
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          {{- with $value.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $value.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with include "larakube.containerEnv" (dict "root" $ "env" $value.env) | trim }}
           env:
             {{- . | nindent 12 }}
