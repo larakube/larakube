@@ -233,7 +233,7 @@ web:
   # -- Tolerations for the web deployment.
   tolerations: []
 
-  # -- Affinity rules for the web deployment.
+  # -- Affinity rules for the web deployment. Overrides the global `affinity`.
   affinity: {}
 
   # -- Topology spread constraints for the web deployment.

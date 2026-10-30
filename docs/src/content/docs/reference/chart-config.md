@@ -55,7 +55,7 @@ This reference explains the config values of the Helm chart.
 | topologySpreadConstraints | list | `[]` | Topology spread constraints for scheduling the pod. |
 | volumeMounts | list | `[]` | Additional volumeMounts on the output Deployment definition. |
 | volumes | list | `[]` | Additional volumes on the output Deployment definition. |
-| web.affinity | object | `{}` | Affinity rules for the web deployment. |
+| web.affinity | object | `{}` | Affinity rules for the web deployment. Overrides the global `affinity`. |
 | web.autoscaling.enabled | bool | `false` | Enable or disable autoscaling for the web deployment. |
 | web.autoscaling.maxReplicas | int | `100` | The maximum number of replicas for autoscaling. |
 | web.autoscaling.minReplicas | int | `1` | The minimum number of replicas for autoscaling. |

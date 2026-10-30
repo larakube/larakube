@@ -89,7 +89,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       terminationGracePeriodSeconds: {{ .Values.web.terminationGracePeriodSeconds }}
-      {{- with .Values.affinity }}
+      {{- with (default .Values.affinity .Values.web.affinity) }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}

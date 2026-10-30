@@ -67,6 +67,15 @@ ingress:
 web:
   env:
     CONTAINER_ROLE: web
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            topologyKey: kubernetes.io/hostname
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/component: web
   autoscaling:
     enabled: true
     minReplicas: 2

@@ -500,7 +500,7 @@
       "description": "Web deployment configuration.",
       "properties": {
         "affinity": {
-          "description": "Affinity rules for the web deployment.",
+          "description": "Affinity rules for the web deployment. Overrides the global `affinity`.",
           "required": [],
           "title": "affinity",
           "type": "object"

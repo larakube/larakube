@@ -214,3 +214,27 @@ tests:
       - equal:
           path: spec.template.spec.containers[0].args
           value: ["--tries=3"]
+
+  - it: prefers web.affinity over the global affinity
+    template: templates/deployment-web.yaml
+    set:
+      affinity:
+        nodeAffinity: {global: true}
+      web.affinity:
+        podAntiAffinity: {web: true}
+    asserts:
+      - equal:
+          path: spec.template.spec.affinity
+          value:
+            podAntiAffinity: {web: true}
+
+  - it: falls back to the global affinity for web
+    template: templates/deployment-web.yaml
+    set:
+      affinity:
+        nodeAffinity: {global: true}
+    asserts:
+      - equal:
+          path: spec.template.spec.affinity
+          value:
+            nodeAffinity: {global: true}

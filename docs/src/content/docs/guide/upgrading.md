@@ -95,6 +95,12 @@ The following settings were documented but not applied to worker pods. Check the
   `topologySpreadConstraints`. Setting most of these used to break the deployment, so if you could deploy before,
   you were not using them.
 
+### `web.affinity` is applied
+
+`web.affinity` was ignored, and the web pods always used the global `affinity`. Now `web.affinity` is used when it is
+set and the global `affinity` otherwise, like `web.tolerations` and `web.topologySpreadConstraints`. If you had set
+`web.affinity`, your web pods are rescheduled according to it.
+
 ### Other changes
 
 - The standard `ingress` now routes to the `<release>-web` Service. Before, it pointed at a Service that does not exist.
