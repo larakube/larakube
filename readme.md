@@ -60,7 +60,7 @@
 | scheduler.env | object | `{}` | Environment variables specific to the scheduler container. |
 | scheduler.resources | object | `{}` | Resource requests and limits for the scheduler container. |
 | scheduler.schedule | string | `"* * * * *"` | The schedule for the scheduler (e.g., every minute). |
-| secretEnvs | list | `[]` | Secret environment variables to set in the container. |
+| secretEnvs | list | `[]` | Environment variables read from existing Kubernetes Secrets, set in every container. Each entry needs `name` (the variable), `secretName` and `secretKey`. |
 | securityContext | object | `{}` | Security context for the container. |
 | service.containerPort | int | `8000` | The port on which the container will listen. |
 | service.port | int | `80` | The port on which the service will be exposed. |

@@ -129,8 +129,27 @@ revisionHistoryLimit: 2
 # -- Environment variables to set in the container.
 env: {}
 
-# -- Secret environment variables to set in the container.
+# @schema
+# type: array
+# items:
+#   type: object
+#   required: [name, secretName, secretKey]
+#   properties:
+#     name:
+#       type: string
+#     secretName:
+#       type: string
+#     secretKey:
+#       type: string
+#     existing:
+#       type: boolean
+# @schema
+# -- Environment variables read from existing Kubernetes Secrets, set in every container.
+# Each entry needs `name` (the variable), `secretName` and `secretKey`.
 secretEnvs: []
+# - name: APP_KEY
+#   secretName: my-app-env
+#   secretKey: APP_KEY
 
 # Web deployment configuration.
 web:

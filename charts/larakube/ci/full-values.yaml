@@ -19,6 +19,9 @@ secretEnvs:
     name: APP_KEY
     secretName: laravel-app-secrets
     secretKey: APP_KEY
+  - name: DB_PASSWORD
+    secretName: laravel-app-secrets
+    secretKey: DB_PASSWORD
 
 volumes:
   - name: storage

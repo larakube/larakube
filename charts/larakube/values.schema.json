@@ -373,9 +373,32 @@
       "type": "object"
     },
     "secretEnvs": {
-      "description": "Secret environment variables to set in the container.",
+      "description": "Environment variables read from existing Kubernetes Secrets, set in every container.\nEach entry needs `name` (the variable), `secretName` and `secretKey`.",
       "items": {
-        "required": []
+        "properties": {
+          "existing": {
+            "required": [],
+            "type": "boolean"
+          },
+          "name": {
+            "required": [],
+            "type": "string"
+          },
+          "secretKey": {
+            "required": [],
+            "type": "string"
+          },
+          "secretName": {
+            "required": [],
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "secretName",
+          "secretKey"
+        ],
+        "type": "object"
       },
       "required": [],
       "title": "secretEnvs",
@@ -1141,7 +1164,6 @@
     "topologySpreadConstraints",
     "revisionHistoryLimit",
     "env",
-    "secretEnvs",
     "web",
     "worker",
     "scheduler",

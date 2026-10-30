@@ -267,3 +267,30 @@ tests:
       - equal:
           path: spec.template.metadata.labels["app.kubernetes.io/component"]
           value: db-migrate
+
+  - it: renders secretEnvs without the existing flag
+    template: templates/deployment-web.yaml
+    set:
+      secretEnvs:
+        - name: DB_PASSWORD
+          secretName: app-secrets
+          secretKey: DB_PASSWORD
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: DB_PASSWORD
+
+  - it: fails on an incomplete secretEnvs entry
+    template: templates/deployment-web.yaml
+    set:
+      secretEnvs:
+        - name: DB_PASSWORD
+          secretName: app-secrets
+    asserts:
+      - failedTemplate:
+          errorPattern: "secretKey"

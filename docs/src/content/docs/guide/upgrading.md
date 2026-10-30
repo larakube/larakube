@@ -106,6 +106,13 @@ set and the global `affinity` otherwise, like `web.tolerations` and `web.topolog
 The database migration Job now uses the global `nodeSelector`, `affinity` and `tolerations`, like the other pods.
 Before, it ignored them and could stay `Pending` on clusters with tainted nodes.
 
+### Every `secretEnvs` entry is applied
+
+Before 0.3.0, only `secretEnvs` entries with `existing: true` were applied; all others were ignored without an error.
+Now every entry is applied, and each one needs `name`, `secretName` and `secretKey`, otherwise the chart fails with an
+error message. `existing` is no longer needed. Check that every entry points at a Secret and key that exist, otherwise
+the pods fail to start.
+
 ### Other changes
 
 - The standard `ingress` now routes to the `<release>-web` Service. Before, it pointed at a Service that does not exist.

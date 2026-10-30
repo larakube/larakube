@@ -33,6 +33,19 @@ MAIL_USERNAME: ""
 MAIL_PASSWORD: ""
 ```
 
+Then pass the keys of the secret to the application with `secretEnvs`. Every entry sets one environment variable in
+all containers (web, workers, scheduler and jobs):
+
+```yaml
+secretEnvs:
+  - name: APP_KEY
+    secretName: my-app-env
+    secretKey: APP_KEY
+  - name: DB_PASSWORD
+    secretName: my-app-env
+    secretKey: DB_PASSWORD
+```
+
 **Generate the application key**:
 
 You can generate the application key locally with the following command:

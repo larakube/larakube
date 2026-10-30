@@ -70,14 +70,15 @@ Usage: include "larakube.containerEnv" (dict "root" $ "env" .Values.web.env)
 - name: {{ $key }}
   value: {{ $value | toString | quote }}
 {{- end }}
-{{- range .root.Values.secretEnvs }}
-{{- if .existing }}
-- name: {{ .name }}
+{{- range $i, $secretEnv := .root.Values.secretEnvs }}
+{{- if not (and $secretEnv.name $secretEnv.secretName $secretEnv.secretKey) }}
+{{- fail (printf "secretEnvs[%d]: name, secretName and secretKey are required" $i) }}
+{{- end }}
+- name: {{ $secretEnv.name }}
   valueFrom:
     secretKeyRef:
-      name: {{ .secretName }}
-      key: {{ .secretKey }}
-{{- end }}
+      name: {{ $secretEnv.secretName | quote }}
+      key: {{ $secretEnv.secretKey | quote }}
 {{- end }}
 {{- end }}
 
