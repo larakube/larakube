@@ -1,4 +1,7 @@
 {{- if .Values.postDeployment.enabled -}}
+{{- if not .Values.postDeployment.command }}
+{{- fail "postDeployment.command is required when postDeployment is enabled" }}
+{{- end }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -33,7 +36,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
-            {{- toYaml (required "postDeployment.command is required when postDeployment is enabled" .Values.postDeployment.command) | nindent 12 }}
+            {{- toYaml .Values.postDeployment.command | nindent 12 }}
           {{- with include "larakube.containerEnv" (dict "root" . "env" .Values.postDeployment.env) | trim }}
           env:
             {{- . | nindent 12 }}
