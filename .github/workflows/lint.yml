@@ -17,6 +17,8 @@ jobs:
 
       - name: "Install Helm"
         uses: azure/setup-helm@v4
+        with:
+          version: v4.3.0
 
       - name: "Lint helm chart"
         run: helm lint charts/larakube --values charts/larakube/values.yaml
@@ -64,6 +66,8 @@ jobs:
 
       - name: "Install Helm"
         uses: azure/setup-helm@v4
+        with:
+          version: v4.3.0
 
       - name: "Install kubeconform"
         env:
