@@ -3,7 +3,8 @@
 set -eu
 
 cp charts/larakube/values.schema.json /tmp/larakube-values.schema.json
-sh ./build.sh >/dev/null 2>&1
+# Keep stderr so a failing helm-schema or helm-docs is visible; set -e stops the check.
+sh ./build.sh >/dev/null
 
 # Print the values table (header up to the first line that is not a table row) of a Markdown file.
 values_table() {
