@@ -4,8 +4,15 @@ updates:
     directory: "/docs"
     schedule:
       interval: "weekly"
+    groups:
+      docs:
+        patterns: ["*"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+    # One PR for all action updates: every merge to main runs a release and a docs deploy.
+    groups:
+      github-actions:
+        patterns: ["*"]

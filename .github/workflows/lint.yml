@@ -13,10 +13,10 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: "Install Helm"
-        uses: azure/setup-helm@v4
+        uses: azure/setup-helm@v5
         with:
           version: v4.3.0
 
@@ -36,7 +36,7 @@ jobs:
         run: helm template charts/larakube --values charts/larakube/values.yaml --output-dir build --debug
 
       - name: "Upload artifact"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build
           path: build
@@ -48,7 +48,7 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # helm-unittest image (Helm 4.3.0, helm-unittest 1.2.1), pinned by digest.
       # The container user differs from the runner user and must be able to create unittests/__snapshot__.
@@ -64,10 +64,10 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: "Install Helm"
-        uses: azure/setup-helm@v4
+        uses: azure/setup-helm@v5
         with:
           version: v4.3.0
 
@@ -89,7 +89,7 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: "Install helm-schema and helm-docs"
         env:
