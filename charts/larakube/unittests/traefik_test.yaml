@@ -143,3 +143,12 @@ tests:
     asserts:
       - failedTemplate:
           errorPattern: "web.certManager.issuer is required"
+
+  - it: fails on a wildcard redirect domain
+    set:
+      web.traefik.domainRedirects:
+        - domain: "*.app.example.com"
+    asserts:
+      - failedTemplate:
+          errorPattern: "wildcard domain"
+        template: templates/middleware-traefik.yml

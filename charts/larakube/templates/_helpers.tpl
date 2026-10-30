@@ -126,5 +126,10 @@ TLS secret used by the Traefik IngressRoutes.
 Name suffix for a domain redirect, e.g. www.example.com -> www-example-com
 */}}
 {{- define "larakube.domainSlug" -}}
+{{- if not . }}
+{{- fail "web.traefik.domainRedirects: every entry needs a domain" }}
+{{- else if contains "*" . }}
+{{- fail (printf "web.traefik.domainRedirects: wildcard domain %q is not supported" .) }}
+{{- end }}
 {{- . | replace "." "-" | kebabcase }}
 {{- end }}
