@@ -62,6 +62,45 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
+Container env: component-specific plain values plus secretEnvs references.
+Usage: include "larakube.containerEnv" (dict "root" $ "env" .Values.web.env)
+*/}}
+{{- define "larakube.containerEnv" -}}
+{{- range $key, $value := .env }}
+- name: {{ $key }}
+  value: {{ $value | toString | quote }}
+{{- end }}
+{{- range .root.Values.secretEnvs }}
+{{- if .existing }}
+- name: {{ .name }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ .secretName }}
+      key: {{ .secretKey }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+PodDisruptionBudget minAvailable / maxUnavailable. Exactly one must be set; 0 is a valid value.
+Usage: include "larakube.pdbSpec" (dict "pdb" .Values.web.pdb "name" "web")
+*/}}
+{{- define "larakube.pdbSpec" -}}
+{{- $hasMin := not (kindIs "invalid" .pdb.minAvailable) }}
+{{- $hasMax := not (kindIs "invalid" .pdb.maxUnavailable) }}
+{{- if and $hasMin $hasMax }}
+{{- fail (printf "%s.pdb: set either minAvailable or maxUnavailable, not both" .name) }}
+{{- else if not (or $hasMin $hasMax) }}
+{{- fail (printf "%s.pdb.enabled is true: set minAvailable or maxUnavailable" .name) }}
+{{- end }}
+{{- if $hasMin }}
+minAvailable: {{ .pdb.minAvailable }}
+{{- else }}
+maxUnavailable: {{ .pdb.maxUnavailable }}
+{{- end }}
+{{- end }}
+
+{{/*
 Traefik CRD apiVersion. Traefik v3 only serves traefik.io; traefik.containo.us is the Traefik v2 group.
 */}}
 {{- define "larakube.traefikApiVersion" -}}
@@ -87,24 +126,4 @@ Name suffix for a domain redirect, e.g. www.example.com -> www-example-com
 */}}
 {{- define "larakube.domainSlug" -}}
 {{- . | replace "." "-" | kebabcase }}
-{{- end }}
-
-{{/*
-Container env: component-specific plain values plus secretEnvs references.
-Usage: include "larakube.containerEnv" (dict "root" $ "env" .Values.web.env)
-*/}}
-{{- define "larakube.containerEnv" -}}
-{{- range $key, $value := .env }}
-- name: {{ $key }}
-  value: {{ $value | toString | quote }}
-{{- end }}
-{{- range .root.Values.secretEnvs }}
-{{- if .existing }}
-- name: {{ .name }}
-  valueFrom:
-    secretKeyRef:
-      name: {{ .secretName }}
-      key: {{ .secretKey }}
-{{- end }}
-{{- end }}
 {{- end }}

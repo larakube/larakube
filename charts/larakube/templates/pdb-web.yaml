@@ -4,14 +4,9 @@ kind: PodDisruptionBudget
 metadata:
   name: {{ include "larakube.fullname" . }}-web
   labels:
-      {{- include "larakube.labels" . | nindent 4 }}
+    {{- include "larakube.labels" . | nindent 4 }}
 spec:
-  {{- if .Values.web.pdb.minAvailable }}
-  minAvailable: {{ .Values.web.pdb.minAvailable }}
-  {{- end }}
-  {{- if .Values.web.pdb.maxUnavailable }}
-  maxUnavailable: {{ .Values.web.pdb.maxUnavailable }}
-  {{- end }}
+  {{- include "larakube.pdbSpec" (dict "pdb" .Values.web.pdb "name" "web") | trim | nindent 2 }}
   selector:
     matchLabels:
       {{- include "larakube.selectorLabels" . | nindent 6 }}
