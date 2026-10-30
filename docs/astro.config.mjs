@@ -27,6 +27,7 @@ export default defineConfig({
 						{ label: 'Ingress', slug: 'guide/ingress' },
 						{ label: 'Scheduler', slug: 'guide/scheduler' },
 						{ label: 'Deployment', slug: 'guide/deployment' },
+						{ label: 'Upgrading', slug: 'guide/upgrading' },
 					],
 				},
 				{

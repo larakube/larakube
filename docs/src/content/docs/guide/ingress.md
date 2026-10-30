@@ -35,7 +35,7 @@ web:
 ```
 
 > [!NOTE]
-> Before chart version 0.3.0, the chart always used the Traefik v2 CRDs. When you upgrade, either set
+> Before chart version 0.3.0, the chart always used the Traefik v2 CRDs (see [Upgrading](/guide/upgrading/#upgrading-to-030)). When you upgrade, either set
 > `web.traefik.version: 2` or make sure your Traefik serves `traefik.io/v1alpha1` (Traefik v3, or v2.10 and later).
 > Switching the CRD group replaces the Traefik resources, so expect a few seconds without routes during that deploy.
 
