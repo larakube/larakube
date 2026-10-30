@@ -23,3 +23,5 @@
 .vscode/
 # CI test values
 ci/
+# Unit tests (helm-unittest)
+unittests/

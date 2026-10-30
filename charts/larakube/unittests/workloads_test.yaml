@@ -1,0 +1,195 @@
+suite: workloads (web, worker, scheduler, migration)
+release:
+  name: t
+set:
+  image.repository: ghcr.io/example/app
+  image.tag: "1.0.0"
+templates:
+  - templates/deployment-web.yaml
+  - templates/deployment-worker.yaml
+  - templates/cronjob-scheduler.yaml
+  - templates/job-db-migrate.yaml
+  - templates/configmap-env.yaml
+tests:
+  - it: quotes non-string env values in the ConfigMap
+    template: templates/configmap-env.yaml
+    set:
+      env:
+        APP_DEBUG: false
+        DB_PORT: 5432
+        APP_ENV: production
+    asserts:
+      - equal:
+          path: data
+          value:
+            APP_DEBUG: "false"
+            DB_PORT: "5432"
+            APP_ENV: "production"
+
+  - it: renders one Deployment per worker
+    template: templates/deployment-worker.yaml
+    set:
+      worker.high:
+        replicaCount: 2
+    asserts:
+      - hasDocuments:
+          count: 2
+
+  - it: uses the worker update strategy (Recreate by default)
+    template: templates/deployment-worker.yaml
+    asserts:
+      - equal:
+          path: spec.strategy
+          value:
+            type: Recreate
+
+  - it: uses a per-worker update strategy
+    template: templates/deployment-worker.yaml
+    set:
+      worker.default.updateStrategy:
+        type: RollingUpdate
+    asserts:
+      - equal:
+          path: spec.strategy.type
+          value: RollingUpdate
+
+  - it: renders global pod settings into workers instead of the render context
+    template: templates/deployment-worker.yaml
+    set:
+      podAnnotations:
+        example.com/a: "1"
+      podLabels:
+        example.com/team: queue
+      volumes:
+        - name: storage
+          emptyDir: {}
+      volumeMounts:
+        - name: storage
+          mountPath: /var/www/html/storage
+      nodeSelector:
+        kubernetes.io/os: linux
+      tolerations:
+        - key: dedicated
+          operator: Exists
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+    asserts:
+      - equal:
+          path: spec.template.metadata.annotations
+          value:
+            example.com/a: "1"
+      - equal:
+          path: spec.template.metadata.labels["example.com/team"]
+          value: queue
+      - equal:
+          path: spec.template.spec.volumes[0].name
+          value: storage
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts[0].mountPath
+          value: /var/www/html/storage
+      - equal:
+          path: spec.template.spec.nodeSelector
+          value:
+            kubernetes.io/os: linux
+      - lengthEqual:
+          path: spec.template.spec.tolerations
+          count: 1
+      - lengthEqual:
+          path: spec.template.spec.topologySpreadConstraints
+          count: 1
+
+  - it: renders worker probes
+    template: templates/deployment-worker.yaml
+    set:
+      worker.default.livenessProbe:
+        exec:
+          command: ["php", "artisan", "--version"]
+      worker.default.readinessProbe:
+        exec:
+          command: ["true"]
+      worker.default.startupProbe:
+        exec:
+          command: ["true"]
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.exec.command
+          value: ["php", "artisan", "--version"]
+      - exists:
+          path: spec.template.spec.containers[0].readinessProbe
+      - exists:
+          path: spec.template.spec.containers[0].startupProbe
+
+  - it: renders a worker entry without optional keys
+    template: templates/deployment-worker.yaml
+    documentSelector:
+      path: metadata.name
+      value: t-larakube-worker-bare
+    set:
+      worker:
+        bare: {}
+    asserts:
+      - notExists:
+          path: spec.strategy
+      - equal:
+          path: spec.template.spec.containers[0].resources
+          value: {}
+
+  - it: gives each component its own env and the secretEnvs
+    set:
+      web.env:
+        ROLE: web
+      worker.default.env:
+        ROLE: worker
+      scheduler.env:
+        ROLE: scheduler
+      databaseMigration:
+        enabled: true
+        env:
+          ROLE: migration
+      secretEnvs:
+        - existing: true
+          name: APP_KEY
+          secretName: app-secrets
+          secretKey: APP_KEY
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ROLE
+            value: web
+        template: templates/deployment-web.yaml
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ROLE
+            value: worker
+        template: templates/deployment-worker.yaml
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.containers[0].env
+          content:
+            name: ROLE
+            value: scheduler
+        template: templates/cronjob-scheduler.yaml
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ROLE
+            value: migration
+        template: templates/job-db-migrate.yaml
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: APP_KEY
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: APP_KEY
+        template: templates/deployment-web.yaml
+
+  - it: omits the env block when there are no env values
+    template: templates/deployment-web.yaml
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].env
