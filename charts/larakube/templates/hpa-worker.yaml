@@ -1,5 +1,5 @@
 {{- range $i, $value := .Values.worker }}
-{{- if $value.autoscaling.enabled }}
+{{- if dig "autoscaling" "enabled" false $value }}
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
