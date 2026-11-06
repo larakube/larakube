@@ -34,12 +34,12 @@ jobs:
         run: cp readme.md charts/larakube/README.md
 
       - name: "Run chart-releaser"
-        uses: helm/chart-releaser-action@v1.8.0
+        uses: helm/chart-releaser-action@v1.9.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "Run GitHub action workflow manually"
-        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        uses: convictional/trigger-workflow-and-wait@v1.6.5
         with:
           owner: larakube
           repo: larakube
